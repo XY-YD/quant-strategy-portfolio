@@ -4,8 +4,8 @@
 
 ## 在线访问
 
-- **作品集主页**: [CloudStudio 部署链接]
-- **交互看板**: 点击主页右上角"交互看板"进入
+- **在线访问**: https://quant-strategy-portfolio.onrender.com
+- **交互看板**: 点击主页右上角"交互看板"进入，支持实时自定义回测
 - **代码仓库**: https://github.com/XY-YD/quant-strategy-portfolio
 
 ## 项目结构
