@@ -695,13 +695,27 @@ def get_recent(code):
     return jsonify({"success": True, "results": results})
 
 
+# ── 静态文件服务（同端口同时提供网页 + API）──
+PORTFOLIO_DIR = os.path.join(BASE_DIR, "portfolio")
+
+
+@app.route("/")
+def serve_index():
+    return send_from_directory(PORTFOLIO_DIR, "index.html")
+
+
+@app.route("/<path:filename>")
+def serve_static(filename):
+    return send_from_directory(PORTFOLIO_DIR, filename)
+
+
 # ── Main ──────────────────────────────────────────────────────
 
 def main():
     import argparse
     parser = argparse.ArgumentParser(description="量化策略课程 — 回测 API 服务")
-    parser.add_argument("--port", type=int, default=8081, help="服务端口 (默认: 8081)")
-    parser.add_argument("--host", default="127.0.0.1", help="绑定地址 (默认: 127.0.0.1)")
+    parser.add_argument("--port", type=int, default=int(os.environ.get("PORT", 8081)), help="服务端口 (默认: 8081)")
+    parser.add_argument("--host", default="0.0.0.0", help="绑定地址 (默认: 0.0.0.0)")
     parser.add_argument("--debug", action="store_true", help="调试模式")
 
     args = parser.parse_args()
@@ -715,17 +729,6 @@ def main():
     print(f"  股票搜索: GET  http://{args.host}:{args.port}/api/stocks?q=宁德")
     print(f"  网页入口: http://{args.host}:{args.port}/")
     print("=" * 60)
-
-    # ── 静态文件服务（同端口同时提供网页 + API）──
-    PORTFOLIO_DIR = os.path.join(BASE_DIR, "portfolio")
-
-    @app.route("/")
-    def serve_index():
-        return send_from_directory(PORTFOLIO_DIR, "index.html")
-
-    @app.route("/<path:filename>")
-    def serve_static(filename):
-        return send_from_directory(PORTFOLIO_DIR, filename)
 
     app.run(host=args.host, port=args.port, debug=args.debug)
 
