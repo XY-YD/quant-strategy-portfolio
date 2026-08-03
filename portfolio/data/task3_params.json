@@ -1,0 +1,35 @@
+[
+  {
+    "name": "MA5/MA15",
+    "short_ma": 5,
+    "long_ma": 15,
+    "return_pct": 24.1349,
+    "annual_return": 25.3659,
+    "mdd": -14.2036,
+    "sharpe": 0.7575,
+    "buy_count": 9,
+    "sell_count": 9
+  },
+  {
+    "name": "MA10/MA30",
+    "short_ma": 10,
+    "long_ma": 30,
+    "return_pct": 23.4582,
+    "annual_return": 24.6514,
+    "mdd": -22.3757,
+    "sharpe": 0.7387,
+    "buy_count": 5,
+    "sell_count": 5
+  },
+  {
+    "name": "MA20/MA60",
+    "short_ma": 20,
+    "long_ma": 60,
+    "return_pct": 56.769,
+    "annual_return": 60.0194,
+    "mdd": -12.6595,
+    "sharpe": 1.5263,
+    "buy_count": 3,
+    "sell_count": 3
+  }
+]

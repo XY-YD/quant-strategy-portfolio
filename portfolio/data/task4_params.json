@@ -1,0 +1,41 @@
+[
+  {
+    "name": "N10/M5",
+    "buy_n": 10,
+    "sell_m": 5,
+    "return_pct": 3.0288,
+    "annual_return": 3.1692,
+    "mdd": -6.0619,
+    "sharpe": 0.0556,
+    "buy_count": 8,
+    "sell_count": 8,
+    "stop_loss_count": 0,
+    "break_low_count": 8
+  },
+  {
+    "name": "N20/M10",
+    "buy_n": 20,
+    "sell_m": 10,
+    "return_pct": -0.0163,
+    "annual_return": -0.017,
+    "mdd": -10.1709,
+    "sharpe": -0.3174,
+    "buy_count": 5,
+    "sell_count": 5,
+    "stop_loss_count": 2,
+    "break_low_count": 3
+  },
+  {
+    "name": "N55/M27",
+    "buy_n": 55,
+    "sell_m": 27,
+    "return_pct": -1.488,
+    "annual_return": -1.5554,
+    "mdd": -4.5916,
+    "sharpe": -0.6271,
+    "buy_count": 2,
+    "sell_count": 2,
+    "stop_loss_count": 1,
+    "break_low_count": 1
+  }
+]

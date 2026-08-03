@@ -1,0 +1,97 @@
+{
+  "累计收益": {
+    "in_sample_optimal": 6.083905447008836,
+    "out_sample_optimal": 0.1812097212233399,
+    "out_sample_default": 0.24729660645438756
+  },
+  "年化收益": {
+    "in_sample_optimal": 0.4033389920842767,
+    "out_sample_optimal": 0.11775316315445727,
+    "out_sample_default": 0.15917641148499762
+  },
+  "年化波动": {
+    "in_sample_optimal": 0.2809711009044253,
+    "out_sample_optimal": 0.24159974346698945,
+    "out_sample_default": 0.25261979731628703
+  },
+  "夏普": {
+    "in_sample_optimal": 1.237406182909613,
+    "out_sample_optimal": 0.45489893900848827,
+    "out_sample_default": 0.5898532300403423
+  },
+  "索提诺": {
+    "in_sample_optimal": 0.08875386985883385,
+    "out_sample_optimal": 0.03220234030581277,
+    "out_sample_default": 0.041504741804246396
+  },
+  "最大回撤": {
+    "in_sample_optimal": -0.3916514199283962,
+    "out_sample_optimal": -0.19721709231992565,
+    "out_sample_default": -0.14718824315367426
+  },
+  "最大回撤时长(日)": {
+    "in_sample_optimal": 747.0,
+    "out_sample_optimal": 168.0,
+    "out_sample_default": 193.0
+  },
+  "基准累计": {
+    "in_sample_optimal": 2.6111865327179062,
+    "out_sample_optimal": 0.48006028286575786,
+    "out_sample_default": 0.48006028286575786
+  },
+  "基准年化": {
+    "in_sample_optimal": 0.24886741032601667,
+    "out_sample_optimal": 0.2996329572946601,
+    "out_sample_default": 0.2996329572946601
+  },
+  "基准波动": {
+    "in_sample_optimal": 0.49274215837578567,
+    "out_sample_optimal": 0.373590674458455,
+    "out_sample_default": 0.373590674458455
+  },
+  "基准最大回撤": {
+    "in_sample_optimal": -0.7954215116279069,
+    "out_sample_optimal": -0.24182608695652166,
+    "out_sample_default": -0.24182608695652166
+  },
+  "交易次数": {
+    "in_sample_optimal": 53.0,
+    "out_sample_optimal": 12.0,
+    "out_sample_default": 16.0
+  },
+  "日胜率": {
+    "in_sample_optimal": 0.16483516483516483,
+    "out_sample_optimal": 0.13793103448275862,
+    "out_sample_default": 0.15384615384615385
+  },
+  "VaR95": {
+    "in_sample_optimal": -0.02249154949926649,
+    "out_sample_optimal": -0.02304434168114404,
+    "out_sample_default": -0.022797968395131884
+  },
+  "VaR99": {
+    "in_sample_optimal": -0.04518630618254592,
+    "out_sample_optimal": -0.037152461692037904,
+    "out_sample_default": -0.04304724733739701
+  },
+  "CVaR95": {
+    "in_sample_optimal": -0.03687667349581056,
+    "out_sample_optimal": -0.03348691797390851,
+    "out_sample_default": -0.034753586490097
+  },
+  "Beta": {
+    "in_sample_optimal": 0.36288014153212966,
+    "out_sample_optimal": 0.4277412431498739,
+    "out_sample_default": 0.46365815206317784
+  },
+  "年化换手率": {
+    "in_sample_optimal": 9.173076923076923,
+    "out_sample_optimal": 8.021220159151193,
+    "out_sample_default": 10.694960212201591
+  },
+  "Calmar": {
+    "in_sample_optimal": 1.0298417714354702,
+    "out_sample_optimal": 0.5970738224019552,
+    "out_sample_default": 1.0814478661777824
+  }
+}

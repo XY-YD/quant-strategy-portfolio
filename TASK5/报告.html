@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TASK5 - 分类型机器学习算法实战报告</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Helvetica Neue", "Microsoft YaHei", Arial, sans-serif;
+    line-height: 1.7;
+    color: #2c3e50;
+    background: #f5f7fa;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+  .hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white; padding: 50px 30px; border-radius: 12px;
+    margin-bottom: 30px; text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  }
+  .hero h1 { font-size: 32px; margin-bottom: 12px; }
+  .hero p { font-size: 16px; opacity: 0.95; }
+  .section {
+    background: white; padding: 30px; border-radius: 10px;
+    margin-bottom: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  }
+  .section h2 {
+    color: #2c3e50; font-size: 24px; margin-bottom: 18px;
+    padding-bottom: 10px; border-bottom: 3px solid #667eea;
+    display: inline-block;
+  }
+  .section h3 { color: #34495e; font-size: 19px; margin: 22px 0 12px; padding-left: 12px; border-left: 4px solid #667eea; }
+  .section h4 { color: #5d6d7e; font-size: 16px; margin: 16px 0 8px; }
+  p { margin-bottom: 12px; }
+  code {
+    background: #f4f6f8; padding: 2px 6px; border-radius: 3px;
+    font-family: "SF Mono", Consolas, monospace; font-size: 14px;
+    color: #c7254e;
+  }
+  pre {
+    background: #282c34; color: #abb2bf; padding: 18px;
+    border-radius: 8px; overflow-x: auto; margin: 14px 0;
+    font-family: "SF Mono", Consolas, monospace; font-size: 13px;
+    line-height: 1.55;
+  }
+  pre .k { color: #c678dd; }  /* keyword */
+  pre .s { color: #98c379; }  /* string */
+  pre .c { color: #5c6370; font-style: italic; }  /* comment */
+  pre .n { color: #61afef; }  /* number */
+  pre .f { color: #e5c07b; }  /* function */
+  .formula {
+    background: #fff8e1; border-left: 4px solid #ffc107;
+    padding: 14px 18px; margin: 12px 0; border-radius: 4px;
+    font-family: "Times New Roman", serif; font-size: 15px;
+  }
+  .img-block { text-align: center; margin: 22px 0; }
+  .img-block img {
+    max-width: 100%; border-radius: 8px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+  }
+  .img-caption { color: #7f8c8d; font-size: 14px; margin-top: 8px; font-style: italic; }
+  table {
+    width: 100%; border-collapse: collapse; margin: 16px 0;
+    background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  th { background: #667eea; color: white; padding: 12px; text-align: center; }
+  td { padding: 10px 12px; border-bottom: 1px solid #ecf0f1; text-align: center; }
+  tr:hover { background: #f8f9fa; }
+  tr:nth-child(even) { background: #fafbfc; }
+  .badge {
+    display: inline-block; padding: 3px 10px; border-radius: 12px;
+    font-size: 12px; font-weight: bold; color: white;
+  }
+  .b-lr { background: #e74c3c; }  /* 逻辑回归 */
+  .b-dt { background: #2ecc71; }  /* 决策树 */
+  .b-rf { background: #3498db; }  /* 随机森林 */
+  .callout {
+    background: #e8f4fd; border-left: 4px solid #3498db;
+    padding: 14px 18px; margin: 14px 0; border-radius: 4px;
+  }
+  .callout-warning {
+    background: #fef5e7; border-left: 4px solid #f39c12;
+    padding: 14px 18px; margin: 14px 0; border-radius: 4px;
+  }
+  .callout-success {
+    background: #eafaf1; border-left: 4px solid #27ae60;
+    padding: 14px 18px; margin: 14px 0; border-radius: 4px;
+  }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 16px 0; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+  .card {
+    background: #f8f9fa; padding: 16px; border-radius: 8px;
+    border: 1px solid #ecf0f1;
+  }
+  .card h4 { color: #2980b9; margin-bottom: 8px; }
+  .toc {
+    background: white; padding: 20px 30px; border-radius: 10px;
+    margin-bottom: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  }
+  .toc h3 { color: #2c3e50; margin-bottom: 10px; }
+  .toc ol { padding-left: 22px; }
+  .toc li { margin: 4px 0; }
+  .toc a { color: #3498db; text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .footer {
+    text-align: center; color: #7f8c8d; padding: 20px;
+    font-size: 13px;
+  }
+  .nav-anchor { scroll-margin-top: 20px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="hero">
+    <h1>📊 分类型机器学习算法实战</h1>
+    <p>TASK5 · 逻辑回归 · 决策树 · 随机森林 · 混淆矩阵 · AUC · ROC曲线</p>
+  </div>
+
+  <div class="toc">
+    <h3>📑 目录</h3>
+    <ol>
+      <li><a href="#part1">第一部分：分类型机器学习算法讲解</a></li>
+      <li><a href="#part2">第二部分：模型评价指标讲解</a></li>
+      <li><a href="#part3">第三部分：Python 编程实战</a></li>
+      <li><a href="#part4">第四部分：结果展示与分析</a></li>
+      <li><a href="#part5">第五部分：总结</a></li>
+    </ol>
+  </div>
+
+  <!-- ============================================== -->
+  <!--  第一部分：分类型机器学习算法 -->
+  <!-- ============================================== -->
+  <div class="section nav-anchor" id="part1">
+    <h2>📘 第一部分：分类型机器学习算法</h2>
+    <p>分类（Classification）是监督学习的核心任务之一：给定带标签的训练数据，学习一个从特征 X 到离散标签 Y 的映射关系。常用的分类算法包括<strong>逻辑回归、决策树、随机森林</strong>等。</p>
+
+    <h3>1.1 逻辑回归（Logistic Regression）</h3>
+    <p>虽然名字里有"回归"，但逻辑回归是<strong>经典的分类算法</strong>，尤其适合二分类任务。</p>
+
+    <h4>📌 核心思想</h4>
+    <p>通过 <strong>Sigmoid 函数</strong>将线性回归的输出映射到 (0,1) 区间，表示样本属于正类的概率：</p>
+    <div class="formula">
+      σ(z) = 1 / (1 + e<sup>-z</sup>) &nbsp;&nbsp; 其中 z = w·x + b
+    </div>
+    <p>最终预测规则：若 P(Y=1|X) ≥ 0.5，则预测为正类（1），否则为负类（0）。</p>
+
+    <h4>📌 损失函数</h4>
+    <p>使用<strong>对数损失（交叉熵损失）</strong>：</p>
+    <div class="formula">
+      L(w) = - 1/m · Σ [ y·log(ŷ) + (1-y)·log(1-ŷ) ]
+    </div>
+
+    <h4>📌 优缺点</h4>
+    <div class="grid-2">
+      <div class="card">
+        <h4>✅ 优点</h4>
+        <ul>
+          <li>训练速度快，可解释性强</li>
+          <li>输出概率值，便于做阈值调整</li>
+          <li>对特征尺度敏感（需标准化）</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>❌ 缺点</h4>
+        <ul>
+          <li>只能学习<strong>线性决策边界</strong></li>
+          <li>对非线性关系表现欠佳</li>
+          <li>需要手动处理特征工程</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>1.2 决策树（Decision Tree）</h3>
+    <p>决策树是一种<strong>树形结构的分类器</strong>，通过对特征空间进行递归划分来预测样本标签。</p>
+
+    <h4>📌 核心思想</h4>
+    <p>从根节点开始，选择<strong>信息增益最大</strong>或<strong>基尼系数最小</strong>的特征进行切分，递归构建子树，直到满足停止条件。</p>
+
+    <h4>📌 划分准则</h4>
+    <div class="formula">
+      信息增益：IG(D, A) = H(D) - H(D|A) &nbsp;&nbsp; (ID3/C4.5)<br>
+      基尼系数：Gini(D) = 1 - Σ p<sub>k</sub><sup>2</sup> &nbsp;&nbsp; (CART)
+    </div>
+
+    <h4>📌 优缺点</h4>
+    <div class="grid-2">
+      <div class="card">
+        <h4>✅ 优点</h4>
+        <ul>
+          <li>模型<strong>直观可解释</strong>，可视化方便</li>
+          <li>无需特征标准化</li>
+          <li>可处理数值型和类别型特征</li>
+          <li>能学习<strong>非线性关系</strong></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>❌ 缺点</h4>
+        <ul>
+          <li>容易<strong>过拟合</strong>（需剪枝）</li>
+          <li>对训练数据的小变化敏感</li>
+          <li>可能陷入局部最优</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>1.3 随机森林（Random Forest）</h3>
+    <p>随机森林是<strong>集成学习（Ensemble Learning）</strong>的代表性算法，通过组合多棵决策树来提升整体性能。</p>
+
+    <h4>📌 核心思想：Bagging</h4>
+    <p>采用<strong>自助采样（Bootstrap Sampling）</strong>从训练集中有放回地抽取多个子集，分别训练决策树，预测时采用<strong>多数投票</strong>（分类）或<strong>平均</strong>（回归）。</p>
+
+    <h4>📌 随机性的两个来源</h4>
+    <ol>
+      <li><strong>样本随机</strong>：每棵树用不同的 bootstrap 样本训练</li>
+      <li><strong>特征随机</strong>：每棵树分裂时只考虑特征的随机子集</li>
+    </ol>
+
+    <h4>📌 优缺点</h4>
+    <div class="grid-2">
+      <div class="card">
+        <h4>✅ 优点</h4>
+        <ul>
+          <li>精度通常比单棵决策树高</li>
+          <li>抗过拟合能力强</li>
+          <li>可输出<strong>特征重要性</strong></li>
+          <li>支持并行训练，速度快</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>❌ 缺点</h4>
+        <ul>
+          <li>模型<strong>可解释性差</strong>（黑盒）</li>
+          <li>占用内存大（多棵树）</li>
+          <li>对高维稀疏数据效果一般</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!--  第二部分：评价指标 -->
+  <!-- ============================================== -->
+  <div class="section nav-anchor" id="part2">
+    <h2>📏 第二部分：模型评价指标</h2>
+
+    <h3>2.1 混淆矩阵（Confusion Matrix）</h3>
+    <p>混淆矩阵是评估分类模型性能的<strong>基础工具</strong>，将预测结果按真实类别与预测类别的组合进行统计。</p>
+
+    <table>
+      <tr><th></th><th>预测为负类(0)</th><th>预测为正类(1)</th></tr>
+      <tr><th>真实负类(0)</th><td>TN（真负）</td><td>FP（假正）</td></tr>
+      <tr><th>真实正类(1)</th><td>FN（假负）</td><td>TP（真正）</td></tr>
+    </table>
+
+    <h4>📌 衍生指标</h4>
+    <div class="formula">
+      准确率  Accuracy  = (TP + TN) / (TP + FP + FN + TN)<br>
+      精确率  Precision = TP / (TP + FP) &nbsp;  <em>预测为正的样本中实际为正的比例</em><br>
+      召回率  Recall    = TP / (TP + FN) &nbsp;  <em>实际为正的样本中被正确识别的比例</em><br>
+      F1 分数 F1        = 2 · (P · R) / (P + R) &nbsp;  <em>精确率与召回率的调和平均</em>
+    </div>
+
+    <div class="callout">
+      <strong>💡 应用场景提示：</strong>
+      <ul style="margin-top:6px;">
+        <li>关注"宁可错杀不可放过"：用<strong>召回率</strong>（如疾病筛查）</li>
+        <li>关注"推荐必须精准"：用<strong>精确率</strong>（如垃圾邮件识别）</li>
+        <li>需要综合平衡：用<strong>F1 值</strong></li>
+      </ul>
+    </div>
+
+    <h3>2.2 ROC 曲线（Receiver Operating Characteristic）</h3>
+    <p>ROC 曲线以<strong>假正率 FPR</strong>为横轴，<strong>真正率 TPR（召回率）</strong>为纵轴，展示了模型在不同分类阈值下的表现。</p>
+    <div class="formula">
+      FPR = FP / (FP + TN) &nbsp;&nbsp; 真正率 = TP / (TP + FN)
+    </div>
+    <p>绘制方法：遍历所有可能的分类阈值，每个阈值对应一对 (FPR, TPR) 值，连成曲线。</p>
+
+    <h4>📌 ROC 曲线解读</h4>
+    <ul>
+      <li>曲线越<strong>靠近左上角</strong>，模型性能越好</li>
+      <li>对角线（y=x）代表<strong>随机分类器</strong></li>
+      <li>曲线越偏离对角线，分类能力越强</li>
+    </ul>
+
+    <h3>2.3 AUC（Area Under Curve）</h3>
+    <p>AUC 即 ROC 曲线下方的<strong>面积</strong>，取值范围 [0, 1]。</p>
+    <div class="formula">
+      AUC = ∫<sub>0</sub><sup>1</sup> TPR(FPR) d(FPR)
+    </div>
+
+    <h4>📌 AUC 的概率意义</h4>
+    <div class="callout-success">
+      <strong>随机抽取一对正负样本，AUC 表示模型将正样本排在负样本前面的概率。</strong>
+      例如 AUC = 0.85 意味着：随机一对正负样本，模型有 85% 的概率给正样本打出更高的预测分数。
+    </div>
+
+    <h4>📌 AUC 判断标准</h4>
+    <table>
+      <tr><th>AUC 范围</th><th>模型能力</th></tr>
+      <tr><td>0.50</td><td>等同于随机猜测</td></tr>
+      <tr><td>0.50 ~ 0.70</td><td>效果较差</td></tr>
+      <tr><td>0.70 ~ 0.85</td><td>效果一般</td></tr>
+      <tr><td>0.85 ~ 0.95</td><td>效果很好</td></tr>
+      <tr><td>0.95 ~ 1.00</td><td>效果优秀</td></tr>
+    </table>
+  </div>
+
+  <!-- ============================================== -->
+  <!--  第三部分：Python 编程实战 -->
+  <!-- ============================================== -->
+  <div class="section nav-anchor" id="part3">
+    <h2>💻 第三部分：Python 编程实战</h2>
+
+    <h3>3.1 数据准备</h3>
+    <p>本案例同时使用两个数据集进行对比实验：</p>
+    <div class="grid-2">
+      <div class="card">
+        <h4>🔬 乳腺癌数据集</h4>
+        <ul>
+          <li>样本数：<strong>569</strong>（良性357 / 恶性212）</li>
+          <li>特征数：<strong>27</strong>（细胞核特征）</li>
+          <li>目标变量：0=恶性, 1=良性</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>📈 股票收益数据集</h4>
+        <ul>
+          <li>样本数：<strong>20,772</strong>（正收益8,389 / 负收益12,383）</li>
+          <li>特征数：<strong>17</strong>（估值、增长率等）</li>
+          <li>目标变量：0=负收益, 1=正收益</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>3.2 完整代码</h3>
+    <pre><code><span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c"># 分类型机器学习模型实战</span>
+
+<span class="k">import</span> numpy <span class="k">as</span> np
+<span class="k">import</span> pandas <span class="k">as</span> pd
+<span class="k">import</span> matplotlib.pyplot <span class="k">as</span> plt
+<span class="k">from</span> sklearn.model_selection <span class="k">import</span> train_test_split
+<span class="k">from</span> sklearn.preprocessing <span class="k">import</span> StandardScaler
+<span class="k">from</span> sklearn.linear_model <span class="k">import</span> LogisticRegression
+<span class="k">from</span> sklearn.tree <span class="k">import</span> DecisionTreeClassifier
+<span class="k">from</span> sklearn.ensemble <span class="k">import</span> RandomForestClassifier
+<span class="k">from</span> sklearn.metrics <span class="k">import</span> (confusion_matrix, roc_curve,
+                              roc_auc_score, accuracy_score)
+
+<span class="c"># ========== 1. 加载数据 ==========</span>
+df = pd.read_csv(<span class="s">'model_data_cancer.csv'</span>)
+feature_cols = [c <span class="k">for</span> c <span class="k">in</span> df.columns <span class="k">if</span> c != <span class="s">'target'</span>]
+X = df[feature_cols].values
+y = df[<span class="s">'target'</span>].values
+
+<span class="c"># ========== 2. 划分训练集/测试集 ==========</span>
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=<span class="n">0.3</span>, random_state=<span class="n">42</span>, stratify=y
+)
+
+<span class="c"># ========== 3. 特征标准化 ==========</span>
+scaler = StandardScaler()
+X_train_s = scaler.fit_transform(X_train)
+X_test_s  = scaler.transform(X_test)
+
+<span class="c"># ========== 4. 构建并训练模型 ==========</span>
+models = {
+    <span class="s">'逻辑回归'</span>:  LogisticRegression(max_iter=<span class="n">1000</span>),
+    <span class="s">'决策树'</span>:   DecisionTreeClassifier(max_depth=<span class="n">5</span>),
+    <span class="s">'随机森林'</span>:  RandomForestClassifier(n_estimators=<span class="n">100</span>, max_depth=<span class="n">8</span>)
+}
+
+<span class="c"># ========== 5. 模型评估 + 6. 绘制ROC曲线 ==========</span>
+fig, ax = plt.subplots(figsize=(<span class="n">8</span>, <span class="n">6</span>))
+colors = [<span class="s">'#e74c3c'</span>, <span class="s">'#2ecc71'</span>, <span class="s">'#3498db'</span>]
+
+<span class="k">for</span> (name, model), color <span class="k">in</span> <span class="f">zip</span>(models.items(), colors):
+    <span class="c"># 训练</span>
+    <span class="k">if</span> name == <span class="s">'逻辑回归'</span>:
+        model.fit(X_train_s, y_train)
+        y_prob = model.predict_proba(X_test_s)[:, <span class="n">1</span>]
+    <span class="k">else</span>:
+        model.fit(X_train, y_train)
+        y_prob = model.predict_proba(X_test)[:, <span class="n">1</span>]
+
+    <span class="c"># 计算AUC并绘图</span>
+    auc = roc_auc_score(y_test, y_prob)
+    fpr, tpr, _ = roc_curve(y_test, y_prob)
+    ax.plot(fpr, tpr, color=color, linewidth=<span class="n">2.5</span>,
+            label=<span class="s">f'</span>{name}<span class="s"> (AUC = </span>{auc:<span class="s">.4f})</span><span class="s">'</span>)
+
+ax.plot([<span class="n">0</span>, <span class="n">1</span>], [<span class="n">0</span>, <span class="n">1</span>], <span class="s">'k--'</span>, label=<span class="s">'随机分类器'</span>)
+ax.set_xlabel(<span class="s">'假正率 (FPR)'</span>)
+ax.set_ylabel(<span class="s">'真正率 (TPR)'</span>)
+ax.set_title(<span class="s">'ROC 曲线对比'</span>)
+ax.legend(); ax.grid(<span class="k">True</span>, alpha=<span class="n">0.3</span>)
+plt.tight_layout()
+plt.savefig(<span class="s">'roc_curve.png'</span>, dpi=<span class="n">150</span>)
+plt.show()
+</code></pre>
+
+    <h3>3.3 代码解读</h3>
+    <table>
+      <tr><th>步骤</th><th>关键代码</th><th>作用</th></tr>
+      <tr>
+        <td>① 数据加载</td><td><code>pd.read_csv()</code></td><td>读取 CSV 数据为 DataFrame</td>
+      </tr>
+      <tr>
+        <td>② 数据划分</td><td><code>train_test_split(...stratify=y)</code></td><td>按 7:3 划分训练/测试集，<br>stratify 保证类别比例一致</td>
+      </tr>
+      <tr>
+        <td>③ 特征标准化</td><td><code>StandardScaler()</code></td><td>将特征缩放为均值0方差1，<br>对逻辑回归尤为重要</td>
+      </tr>
+      <tr>
+        <td>④ 模型训练</td><td><code>model.fit(X_train, y_train)</code></td><td>用训练集拟合模型参数</td>
+      </tr>
+      <tr>
+        <td>⑤ 预测概率</td><td><code>predict_proba()[:,1]</code></td><td>取正类预测概率用于绘制 ROC</td>
+      </tr>
+      <tr>
+        <td>⑥ 计算 AUC</td><td><code>roc_auc_score(y_test, y_prob)</code></td><td>计算 ROC 曲线下面积</td>
+      </tr>
+      <tr>
+        <td>⑦ 绘制 ROC</td><td><code>roc_curve(y_test, y_prob)</code></td><td>计算 (FPR, TPR) 序列并绘制</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ============================================== -->
+  <!--  第四部分：结果展示 -->
+  <!-- ============================================== -->
+  <div class="section nav-anchor" id="part4">
+    <h2>📊 第四部分：结果展示与分析</h2>
+
+    <h3>4.1 乳腺癌数据集结果</h3>
+    <p>569 个样本按 7:3 划分（训练 398，测试 171）。</p>
+
+    <table>
+      <tr>
+        <th>模型</th><th>准确率</th><th>精确率</th><th>召回率</th><th>F1 值</th><th>AUC</th>
+      </tr>
+      <tr>
+        <td><span class="badge b-lr">逻辑回归</span></td>
+        <td>0.9883</td><td>0.9907</td><td>0.9907</td><td>0.9907</td><td><strong>0.9977</strong></td>
+      </tr>
+      <tr>
+        <td><span class="badge b-dt">决策树</span></td>
+        <td>0.9357</td><td>0.9444</td><td>0.9533</td><td>0.9488</td><td>0.9268</td>
+      </tr>
+      <tr>
+        <td><span class="badge b-rf">随机森林</span></td>
+        <td>0.9415</td><td>0.9619</td><td>0.9439</td><td>0.9528</td><td>0.9907</td>
+      </tr>
+    </table>
+
+    <div class="img-block">
+      <img src="roc_乳腺癌数据.png" alt="乳腺癌ROC曲线">
+      <div class="img-caption">图 4-1：乳腺癌数据集 ROC 曲线对比</div>
+    </div>
+
+    <div class="img-block">
+      <img src="confusion_matrix_乳腺癌数据.png" alt="乳腺癌混淆矩阵">
+      <div class="img-caption">图 4-2：乳腺癌数据集 混淆矩阵对比</div>
+    </div>
+
+    <div class="img-block">
+      <img src="metrics_乳腺癌数据.png" alt="乳腺癌指标对比">
+      <div class="img-caption">图 4-3：乳腺癌数据集 评估指标对比</div>
+    </div>
+
+    <div class="callout-success">
+      <strong>📌 结论：</strong>乳腺癌数据集三类模型均表现优异，AUC 都在 0.92 以上。
+      逻辑回归表现最好（AUC=0.9977），说明经过特征标准化后，特征与目标之间近似线性可分。
+      随机森林紧随其后（AUC=0.9907），体现出集成学习的优势。
+    </div>
+
+    <h3>4.2 股票收益数据集结果</h3>
+    <p>20,772 个样本按 7:3 划分（训练 14,540，测试 6,232）。</p>
+
+    <table>
+      <tr>
+        <th>模型</th><th>准确率</th><th>精确率</th><th>召回率</th><th>F1 值</th><th>AUC</th>
+      </tr>
+      <tr>
+        <td><span class="badge b-lr">逻辑回归</span></td>
+        <td>0.5956</td><td>0.4615</td><td>0.0072</td><td>0.0141</td><td>0.5561</td>
+      </tr>
+      <tr>
+        <td><span class="badge b-dt">决策树</span></td>
+        <td>0.6114</td><td>0.5396</td><td>0.2571</td><td>0.3482</td><td>0.6078</td>
+      </tr>
+      <tr>
+        <td><span class="badge b-rf">随机森林</span></td>
+        <td>0.6248</td><td>0.5727</td><td>0.2801</td><td>0.3762</td><td><strong>0.6331</strong></td>
+      </tr>
+    </table>
+
+    <div class="img-block">
+      <img src="roc_股票收益数据.png" alt="股票数据ROC曲线">
+      <div class="img-caption">图 4-4：股票收益数据集 ROC 曲线对比</div>
+    </div>
+
+    <div class="img-block">
+      <img src="confusion_matrix_股票收益数据.png" alt="股票混淆矩阵">
+      <div class="img-caption">图 4-5：股票收益数据集 混淆矩阵对比</div>
+    </div>
+
+    <div class="img-block">
+      <img src="metrics_股票收益数据.png" alt="股票指标对比">
+      <div class="img-caption">图 4-6：股票收益数据集 评估指标对比</div>
+    </div>
+
+    <div class="callout-warning">
+      <strong>📌 结论：</strong>股票数据集所有模型的 AUC 都在 0.55 ~ 0.65 之间，预测效果有限。
+      这并非模型本身的问题，而是股票市场受<strong>宏观经济、政策、情绪、突发事件</strong>等多重因素影响，
+      仅凭历史财务指标难以稳定预测未来收益——这也印证了<strong>"股票市场不可预测"</strong>这一业界共识。
+      其中随机森林表现相对最好（AUC=0.6331），说明其非线性拟合能力有一定优势。
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!--  第五部分：总结 -->
+  <!-- ============================================== -->
+  <div class="section nav-anchor" id="part5">
+    <h2>🎯 第五部分：总结</h2>
+
+    <h3>5.1 算法对比总结</h3>
+    <table>
+      <tr>
+        <th>维度</th>
+        <th><span class="badge b-lr">逻辑回归</span></th>
+        <th><span class="badge b-dt">决策树</span></th>
+        <th><span class="badge b-rf">随机森林</span></th>
+      </tr>
+      <tr>
+        <td>模型类型</td><td>线性分类器</td><td>非线性树模型</td><td>集成树模型</td>
+      </tr>
+      <tr>
+        <td>可解释性</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐⭐</td><td>⭐⭐</td>
+      </tr>
+      <tr>
+        <td>训练速度</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐</td>
+      </tr>
+      <tr>
+        <td>抗过拟合</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐</td><td>⭐⭐⭐⭐</td>
+      </tr>
+      <tr>
+        <td>预测精度</td><td>中</td><td>中</td><td>高</td>
+      </tr>
+      <tr>
+        <td>特征要求</td><td>需标准化</td><td>无需标准化</td><td>无需标准化</td>
+      </tr>
+      <tr>
+        <td>适用场景</td><td>线性可分问题</td><td>需要解释的简单任务</td><td>追求精度的复杂任务</td>
+      </tr>
+    </table>
+
+    <h3>5.2 评价指标选择建议</h3>
+    <div class="grid-3">
+      <div class="card">
+        <h4>类别平衡</h4>
+        <p>用 <strong>准确率 / AUC</strong>；<br>如本任务的乳腺癌数据</p>
+      </div>
+      <div class="card">
+        <h4>类别不平衡</h4>
+        <p>用 <strong>F1 / AUC-PR</strong>；<br>关注少数类</p>
+      </div>
+      <div class="card">
+        <h4>概率输出</h4>
+        <p>用 <strong>AUC / 对数损失</strong>；<br>可调整阈值</p>
+      </div>
+    </div>
+
+    <h3>5.3 关键收获</h3>
+    <ol>
+      <li>三种分类算法各有适用场景，<strong>随机森林在大多数情况下表现最稳健</strong>。</li>
+      <li><strong>ROC 曲线 + AUC</strong>是评估分类模型最常用、且不受分类阈值影响的指标。</li>
+      <li>金融数据预测本质上是<strong>非常困难</strong>的任务，AUC 略高于 0.5 已说明模型捕捉到了微弱信号。</li>
+      <li>特征工程、数据质量往往比<strong>模型选择</strong>更影响最终效果。</li>
+    </ol>
+  </div>
+
+  <div class="footer">
+    <p>📚 TASK5 · 分类型机器学习算法实战报告 · 2026-07-17</p>
+    <p>代码文件：classification_models.py &nbsp;|&nbsp; 数据：model_data_cancer.csv / model_data_stock.csv</p>
+  </div>
+
+</div>
+</body>
+</html>

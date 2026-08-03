@@ -1,0 +1,53 @@
+[
+  {
+    "name": "标准(经典)",
+    "s1_entry": 20,
+    "s1_exit": 10,
+    "s2_entry": 55,
+    "s2_exit": 20,
+    "return_pct": -13.7702,
+    "annual_return": -14.3513,
+    "mdd": -26.4398,
+    "sharpe": -0.9518,
+    "long_open": 6,
+    "short_open": 4,
+    "long_add": 5,
+    "short_add": 5,
+    "close_long": 7,
+    "close_short": 4
+  },
+  {
+    "name": "灵敏",
+    "s1_entry": 10,
+    "s1_exit": 5,
+    "s2_entry": 40,
+    "s2_exit": 20,
+    "return_pct": -13.5503,
+    "annual_return": -14.1229,
+    "mdd": -31.9787,
+    "sharpe": -0.6728,
+    "long_open": 10,
+    "short_open": 9,
+    "long_add": 8,
+    "short_add": 7,
+    "close_long": 10,
+    "close_short": 8
+  },
+  {
+    "name": "稳健",
+    "s1_entry": 55,
+    "s1_exit": 27,
+    "s2_entry": 100,
+    "s2_exit": 50,
+    "return_pct": -8.4952,
+    "annual_return": -8.8653,
+    "mdd": -9.9574,
+    "sharpe": -1.1992,
+    "long_open": 3,
+    "short_open": 1,
+    "long_add": 3,
+    "short_add": 3,
+    "close_long": 3,
+    "close_short": 1
+  }
+]

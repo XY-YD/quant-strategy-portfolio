@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# App data
+.workbuddy/
+
+# Sensitive config (contains Tushare token)
+local_config.py
+.env
+
+# Generated output (can be regenerated)
+backtest_output/
+
+# Temporary
+*.tmp
+*.log

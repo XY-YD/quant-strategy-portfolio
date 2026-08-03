@@ -1,0 +1,46 @@
+[
+  {
+    "name": "宁德时代",
+    "return_pct": 24.1349,
+    "annual_return": 25.3659,
+    "mdd": -14.2036,
+    "sharpe": 0.7575,
+    "buy_count": 9,
+    "sell_count": 9,
+    "benchmark_return": 0,
+    "benchmark_mdd": -18.4552
+  },
+  {
+    "name": "平安银行",
+    "return_pct": -13.0341,
+    "annual_return": -13.5867,
+    "mdd": -13.0341,
+    "sharpe": -2.0794,
+    "buy_count": 12,
+    "sell_count": 13,
+    "benchmark_return": 0,
+    "benchmark_mdd": -23.7481
+  },
+  {
+    "name": "贵州茅台",
+    "return_pct": -4.8198,
+    "annual_return": -5.0342,
+    "mdd": -10.5938,
+    "sharpe": -0.6647,
+    "buy_count": 11,
+    "sell_count": 12,
+    "benchmark_return": 0,
+    "benchmark_mdd": -24.8469
+  },
+  {
+    "name": "五粮液",
+    "return_pct": -1.7035,
+    "annual_return": -1.7806,
+    "mdd": -7.8279,
+    "sharpe": -0.4583,
+    "buy_count": 8,
+    "sell_count": 8,
+    "benchmark_return": 0,
+    "benchmark_mdd": -43.6851
+  }
+]

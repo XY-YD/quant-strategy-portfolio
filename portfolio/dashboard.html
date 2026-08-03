@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>交互式策略看板 - 量化策略课程</title>
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+</head>
+<body>
+  <div class="dash-header">
+    <div>
+      <span class="title">交互式策略看板</span>
+      <span class="stock-code">宁德时代 300750.SZ</span>
+    </div>
+    <a href="index.html" class="back-link">返回作品集</a>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="dual-ma">双均线策略</button>
+    <button class="tab-btn" data-tab="turtle">海龟策略</button>
+    <button class="tab-btn" data-tab="turtle-adv">双系统海龟</button>
+    <button class="tab-btn" data-tab="ml-selection">ML选股</button>
+    <button class="tab-btn" data-tab="optimization">策略寻优</button>
+    <button class="tab-btn" data-tab="comparison">综合对比</button>
+    <button class="tab-btn" data-tab="custom">⚡ 自定义回测</button>
+  </div>
+
+  <div class="dash-layout">
+    <div class="sidebar" id="sidebar">
+    </div>
+    <div class="main-content">
+
+      <div class="tab-content active" id="tab-dual-ma">
+        <div class="risk-warning">
+          <div class="icon">!</div>
+          <div>均线参数容易过拟合，需要比较不同股票和周期。夏普比率仅供参考，不代表未来收益。</div>
+        </div>
+        <div class="chart-container">
+          <div class="chart-title">股价、均线与交易信号<span class="badge badge-accent" style="margin-left:8px;">MA5/MA15</span></div>
+          <div class="chart-desc">绿色三角=金叉买入，红色三角=死叉卖出 | 数据来源: Tushare Pro</div>
+          <div class="chart-body tall" id="chart-ma-price"></div>
+        </div>
+        <div class="chart-grid cols-2">
+          <div class="chart-container">
+            <div class="chart-title">策略净值 vs 基准</div>
+            <div class="chart-body" id="chart-ma-nav"></div>
+          </div>
+          <div class="chart-container">
+            <div class="chart-title">回撤曲线</div>
+            <div class="chart-body" id="chart-ma-drawdown"></div>
+          </div>
+        </div>
+        <div class="chart-container">
+          <div class="chart-title">多参数对比</div>
+          <div class="chart-body" id="chart-ma-params"></div>
+        </div>
+        <div class="chart-container">
+          <div class="chart-title">多股票策略指标对比</div>
+          <div class="chart-body" id="chart-ma-stocks"></div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-turtle">
+        <div class="risk-warning">
+          <div class="icon">!</div>
+          <div>趋势突破策略在震荡市场中可能频繁失效，需要结合止损纪律。ATR="市场的恐慌指数"，止损="保险绳"。</div>
+        </div>
+        <div class="chart-container">
+          <div class="chart-title">唐奇安通道、ATR与交易信号</div>
+          <div class="chart-desc">红色三角=突破买入 | 绿色=止损离场 | 橙色=跌破下轨离场</div>
+          <div class="chart-body tall" id="chart-turtle-price"></div>
+        </div>
+        <div class="chart-grid cols-2">
+          <div class="chart-container">
+            <div class="chart-title">策略净值 vs 基准</div>
+            <div class="chart-body" id="chart-turtle-nav"></div>
+          </div>
+          <div class="chart-container">
+            <div class="chart-title">回撤曲线</div>
+            <div class="chart-body" id="chart-turtle-drawdown"></div>
+          </div>
+        </div>
+        <div class="chart-container">
+          <div class="chart-title">通道参数对比 (N10/M5 vs N20/M10 vs N55/M27)</div>
+          <div class="chart-body" id="chart-turtle-params"></div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-turtle-adv">
+        <div class="risk-warning">
+          <div class="icon">!</div>
+          <div>双系统海龟(S1=20/10短线 + S2=55/20长线)含金字塔加仓和做空，风险敞口更大。经典海龟用2倍ATR止损控制每笔风险。</div>
+        </div>
+        <div class="chart-container">
+          <div class="chart-title">双系统通道与多空信号</div>
+          <div class="chart-desc">S1(短线)=20日通道 | S2(长线)=55日通道 | ATR动态仓位管理</div>
+          <div class="chart-body tall" id="chart-turtle-adv-price"></div>
+        </div>
+        <div class="chart-grid cols-2">
+          <div class="chart-container">
+            <div class="chart-title">策略净值曲线</div>
+            <div class="chart-body" id="chart-turtle-adv-nav"></div>
+          </div>
+          <div class="chart-container">
+            <div class="chart-title">回撤曲线</div>
+            <div class="chart-body" id="chart-turtle-adv-drawdown"></div>
+          </div>
+        </div>
+        <div class="chart-container">
+          <div class="chart-title">三组配置对比 (标准/灵敏/稳健)</div>
+          <div class="chart-body" id="chart-turtle-adv-params"></div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-ml-selection">
+        <div class="risk-warning">
+          <div class="icon">!</div>
+          <div>模型指标高不代表可交易性强，应关注样本外表现。预测模型转交易策略时，要额外考虑调仓频率和交易成本。</div>
+        </div>
+        <div class="chart-container">
+          <div class="chart-title">ML模型回测指标对比</div>
+          <div class="chart-desc">4种模型：逻辑回归/决策树/随机森林/梯度提升</div>
+          <div class="chart-body tall" id="chart-ml-models"></div>
+        </div>
+        <div class="chart-grid cols-2">
+          <div class="chart-container">
+            <div class="chart-title">累计收益与夏普比率</div>
+            <div class="chart-body" id="chart-ml-returns"></div>
+          </div>
+          <div class="chart-container">
+            <div class="chart-title">最大回撤与胜率</div>
+            <div class="chart-body" id="chart-ml-risk"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-optimization">
+        <div class="risk-warning">
+          <div class="icon">!</div>
+          <div>样本内最优参数不代表样本外最优。过度拟合历史数据可能导致未来实盘表现大幅下降。成本敏感性显示交易成本对收益的侵蚀。</div>
+        </div>
+        <div class="chart-container">
+          <div class="chart-title">参数寻优热力图 (Top50 按夏普排序)</div>
+          <div class="chart-desc">颜色越深=夏普越高 | 横轴=长均线 | 纵轴=短均线</div>
+          <div class="chart-body tall" id="chart-opt-heatmap"></div>
+        </div>
+        <div class="chart-grid cols-2">
+          <div class="chart-container">
+            <div class="chart-title">样本内 vs 样本外指标对比</div>
+            <div class="chart-body" id="chart-opt-compare"></div>
+          </div>
+          <div class="chart-container">
+            <div class="chart-title">成本敏感性分析</div>
+            <div class="chart-desc">不同滑点下年化收益/夏普/回撤变化</div>
+            <div class="chart-body" id="chart-opt-sensitivity"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-comparison">
+        <div class="chart-container">
+          <div class="chart-title">全策略净值对比</div>
+          <div class="chart-desc">双均线 vs 海龟 vs 双系统海龟 | 基准=买入持有</div>
+          <div class="chart-body tall" id="chart-cmp-nav"></div>
+        </div>
+        <div class="chart-grid cols-2">
+          <div class="chart-container">
+            <div class="chart-title">策略指标雷达图</div>
+            <div class="chart-body" id="chart-cmp-radar"></div>
+          </div>
+          <div class="chart-container">
+            <div class="chart-title">风险指标对比</div>
+            <div class="chart-body" id="chart-cmp-risk"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-custom">
+        <div class="risk-warning">
+          <div class="icon">⚡</div>
+          <div>自定义回测需要启动本地 Flask 服务 (python backtest_server.py --port 8081)。数据从 Tushare 实时获取，请确保网络畅通。</div>
+        </div>
+
+        <!-- Server Status -->
+        <div class="custom-status" id="custom-server-status">
+          <span class="status-dot"></span>
+          <span class="status-text">检查服务连接...</span>
+        </div>
+
+        <!-- Form -->
+        <div class="custom-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>股票代码</label>
+              <div class="code-search-wrap">
+                <input type="text" id="custom-code" placeholder="300750" value="300750" autocomplete="off">
+                <div class="code-search-results" id="code-search-results"></div>
+              </div>
+              <span class="form-hint" id="stock-name-hint">宁德时代</span>
+            </div>
+            <div class="form-group">
+              <label>策略类型</label>
+              <select id="custom-strategy">
+                <option value="dual-ma">双均线策略</option>
+                <option value="turtle">海龟策略</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row" id="params-dual-ma">
+            <div class="form-group">
+              <label>短均线周期</label>
+              <input type="number" id="param-ma-short" value="5" min="2" max="120">
+            </div>
+            <div class="form-group">
+              <label>长均线周期</label>
+              <input type="number" id="param-ma-long" value="15" min="5" max="250">
+            </div>
+          </div>
+
+          <div class="form-row hidden" id="params-turtle">
+            <div class="form-group">
+              <label>买入通道 N</label>
+              <input type="number" id="param-turtle-n" value="20" min="5" max="120">
+            </div>
+            <div class="form-group">
+              <label>卖出通道 M</label>
+              <input type="number" id="param-turtle-m" value="10" min="2" max="60">
+            </div>
+            <div class="form-group">
+              <label>止损倍数</label>
+              <input type="number" id="param-turtle-stop" value="2.0" min="0.5" max="5.0" step="0.1">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>起始日期</label>
+              <input type="date" id="custom-start" value="2022-01-01">
+            </div>
+            <div class="form-group">
+              <label>结束日期</label>
+              <input type="date" id="custom-end" value="2026-08-03">
+            </div>
+            <div class="form-group">
+              <label>初始资金 (元)</label>
+              <input type="number" id="custom-capital" value="100000" min="10000" step="10000">
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn-primary" id="btn-run-backtest" onclick="CustomBacktest.run()">
+              🚀 运行回测
+            </button>
+            <span class="form-hint">或使用命令行: python custom_backtest.py --code 300750 --strategy dual-ma --params 5,15</span>
+          </div>
+        </div>
+
+        <!-- Loading -->
+        <div id="custom-loading" class="hidden">
+          <div class="loading-spinner"></div>
+          <p>正在拉取数据并运行回测...</p>
+        </div>
+
+        <!-- Results -->
+        <div id="custom-results" class="hidden">
+          <div class="chart-container">
+            <div class="chart-title" id="custom-result-title">回测结果</div>
+            <div class="chart-body tall" id="chart-custom-price"></div>
+          </div>
+          <div class="chart-grid cols-2">
+            <div class="chart-container">
+              <div class="chart-title">策略净值</div>
+              <div class="chart-body" id="chart-custom-nav"></div>
+            </div>
+            <div class="chart-container">
+              <div class="chart-title">回撤曲线</div>
+              <div class="chart-body" id="chart-custom-drawdown"></div>
+            </div>
+          </div>
+          <div class="custom-metrics" id="custom-metrics"></div>
+        </div>
+
+        <!-- Error -->
+        <div id="custom-error" class="hidden">
+          <div class="error-box">
+            <div class="error-icon">⚠️</div>
+            <div class="error-msg" id="custom-error-msg"></div>
+          </div>
+          <div class="setup-guide" id="custom-setup-guide">
+            <h4>如何启动本地回测服务</h4>
+            <ol>
+              <li>打开终端，进入项目目录</li>
+              <li>安装依赖: <code>pip install flask flask-cors tushare pandas numpy</code></li>
+              <li>启动服务: <code>python backtest_server.py --port 8081</code></li>
+              <li>服务启动后，刷新本页面即可使用</li>
+            </ol>
+            <p style="color:var(--color-text-muted);margin-top:8px;">
+              或者直接使用命令行工具: <code>python custom_backtest.py --code 300750 --strategy dual-ma --params 5,15</code>
+            </p>
+          </div>
+
+          <!-- 数据更新 -->
+          <div class="update-data-section" style="margin-top:16px;padding-top:16px;border-top:1px solid var(--color-border);">
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+              <input type="text" id="update-code" value="300750" placeholder="股票代码"
+                     style="width:90px;padding:6px 10px;border:1px solid var(--color-border);border-radius:4px;font-size:13px;background:var(--color-bg-primary);color:var(--color-text-primary);">
+              <button id="btn-update-data" onclick="CustomBacktest.updateData()"
+                      style="padding:6px 16px;background:var(--color-bg-secondary);border:1px solid var(--color-border);border-radius:4px;font-size:13px;cursor:pointer;color:var(--color-text-primary);white-space:nowrap;">
+                🔄 更新数据
+              </button>
+              <span id="update-status" style="font-size:12px;color:var(--color-text-secondary);"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="dash-footer">
+    <div class="source">
+      <span class="dot"></span>
+      <span>数据来源: Tushare Pro</span>
+      <span style="margin-left:12px;">回测区间: 2025-07-04 ~ 2026-07-03</span>
+      <span style="margin-left:12px;">颜色约定: 涨红跌绿</span>
+    </div>
+    <span>夏阳 - 量化策略课程</span>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
