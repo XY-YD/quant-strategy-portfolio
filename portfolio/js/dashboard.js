@@ -548,7 +548,9 @@ const Dashboard = {
 // ═════════════════════════════════════════════════════════════
 
 var CustomBacktest = {
-  API_BASE: "",
+  API_BASE: (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.hostname.includes("onrender.com"))
+    ? ""  // Same origin: local dev or Render
+    : "https://quant-strategy-portfolio.onrender.com",  // Cross-origin: CloudStudio etc.
   serverConnected: false,
   currentResult: null,
   searchTimer: null,
