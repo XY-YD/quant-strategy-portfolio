@@ -150,4 +150,12 @@
   .about-grid {
     grid-template-columns: 1fr;
   }
+  .timeline-item { padding-left: 32px; }
+  .timeline-content p { font-size: 11px; }
+}
+
+@media (max-width: 480px) {
+  .contact-item { padding: 8px; }
+  .contact-icon { width: 32px; height: 32px; font-size: 14px; }
+  .contact-value { font-size: 12px; }
 }

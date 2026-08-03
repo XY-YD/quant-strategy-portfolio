@@ -481,10 +481,34 @@
 }
 
 @media (max-width: 768px) {
-  .tab-bar { padding: 0 0.5rem; }
+  .tab-bar {
+    padding: 0 0.5rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tab-bar::-webkit-scrollbar { display: none; }
   .tab-btn { padding: 8px 12px; font-size: 13px; }
   .main-content { padding: 0.75rem; }
   .chart-body { min-height: 250px; }
+  .chart-body.tall { min-height: 300px; }
+  .dash-header { padding: 0.5rem 0.75rem; }
+  .dash-header .title { font-size: 14px; }
+  .dash-header .stock-code { display: none; }
+  .methodology-body .pseudo-code { font-size: 11px; }
+  .custom-metrics { grid-template-columns: repeat(2, 1fr); }
+  .form-row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .tab-btn { padding: 6px 10px; font-size: 12px; }
+  .chart-body { min-height: 200px; }
+  .chart-body.tall { min-height: 250px; }
+  .custom-metrics { grid-template-columns: 1fr; }
+  .hero { padding: 1.5rem 12px; }
+  .hero h1 { font-size: 20px; }
+  .hero .subtitle { font-size: 13px; }
+  .hero-stats { gap: 0.75rem; }
+  .hero-stat .num { font-size: 22px; }
 }
 
 /* ── Strategy Methodology ── */
