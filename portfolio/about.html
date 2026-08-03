@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>关于 - 量化策略课程作品集</title>
+  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="css/portfolio.css">
+  <link rel="stylesheet" href="css/about.css">
+</head>
+<body>
+  <nav class="top-nav">
+    <a href="index.html" class="nav-logo">量化策略作品集</a>
+    <div class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="dashboard.html">看板</a>
+      <a href="about.html" class="active">关于</a>
+      <a href="https://github.com/XY-YD/quant-strategy-portfolio" target="_blank">GitHub</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <section class="hero fade-in">
+      <h1>关于我</h1>
+      <p class="subtitle">热爱量化交易，用代码理解市场</p>
+    </section>
+
+    <div class="about-grid">
+      <div class="card about-intro">
+        <h2 class="section-title">自我介绍</h2>
+        <p>你好，我是夏阳，一名对量化交易充满热情的学习者。</p>
+        <p style="margin-top: 0.75rem;">通过系统化学习量化策略课程，我从数据获取、技术指标计算、策略回测到机器学习选股，完整经历了量化研究的全流程。这个作品集展示了我独立完成的 8 个策略任务，涵盖双均线交叉、海龟交易、ML 分类与选股、参数寻优等多种策略类型。</p>
+        <p style="margin-top: 0.75rem;">我相信量化交易的核心不是某个"必胜公式"，而是严谨的研究方法论：假设 → 验证 → 迭代。每一行代码、每一张图表，都是这个过程中的脚印。</p>
+      </div>
+
+      <div class="card about-contact">
+        <h2 class="section-title">联系方式</h2>
+        <div class="contact-list">
+          <a href="mailto:3902323152@qq.com" class="contact-item">
+            <span class="contact-icon">✉</span>
+            <div>
+              <div class="contact-label">邮箱</div>
+              <div class="contact-value">3902323152@qq.com</div>
+            </div>
+          </a>
+          <a href="https://github.com/XY-YD" target="_blank" class="contact-item">
+            <span class="contact-icon">⌥</span>
+            <div>
+              <div class="contact-label">GitHub</div>
+              <div class="contact-value">@XY-YD</div>
+            </div>
+          </a>
+          <a href="https://quant-strategy-portfolio.onrender.com" class="contact-item">
+            <span class="contact-icon">🌐</span>
+            <div>
+              <div class="contact-label">在线作品集</div>
+              <div class="contact-value">quant-strategy-portfolio.onrender.com</div>
+            </div>
+          </a>
+        </div>
+        <div style="margin-top: 1rem;">
+          <a href="mailto:3902323152@qq.com" class="btn btn-primary">联系我</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-header" style="margin-top: 2rem;">
+      <h2>项目时间线</h2>
+    </div>
+    <div class="card">
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-date">2025-07</div>
+            <div class="timeline-title">TASK1 - 数据获取与可视化</div>
+            <p>通过 Tushare API 获取宁德时代 242 个交易日日线数据，完成数据清洗与收盘价走势可视化。</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-date">2025-07</div>
+            <div class="timeline-title">TASK2 - 技术指标分析</div>
+            <p>计算并可视化 RSI、MACD、布林带、KDJ 四大经典技术指标，含缺失值检查和描述性统计。</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-date">2025-07</div>
+            <div class="timeline-title">TASK3 - 双均线策略回测</div>
+            <p>实现双均线交叉策略，3 组参数 × 4 只股票对比验证，最优组合收益 +24.1%，夏普 0.76。</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-date">2025-07</div>
+            <div class="timeline-title">TASK4 - 海龟交易策略</div>
+            <p>经典海龟策略回测（唐奇安通道 + ATR 止损），含双系统进阶版（S1/S2 + 金字塔加仓）。</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-date">2025-07</div>
+            <div class="timeline-title">TASK5 - ML 分类实战</div>
+            <p>逻辑回归 / SVM / 随机森林三模型对比，应用于乳腺癌与股票收益数据，ROC/AUC 评估。</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-date">2025-07</div>
+            <div class="timeline-title">TASK6 - ML 选股策略</div>
+            <p>梯度提升模型季度截面选股，超额收益 +26%，夏普 3.41，含因子 IC 分析和多空组合。</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-date">2025-07</div>
+            <div class="timeline-title">TASK7 - 策略寻优与实盘模拟</div>
+            <p>1296 组参数网格寻优，样本内外前向测试，含 VaR/CVaR 风险指标和成本敏感性分析。</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-date">2025-07</div>
+            <div class="timeline-title">TASK8 - 综合学习报告</div>
+            <p>30 页 PDF 综合报告，系统化总结全流程，含自动目录和 8 条实战建议。</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot accent"></div>
+          <div class="timeline-content">
+            <div class="timeline-date">2026-08</div>
+            <div class="timeline-title">交互式可视化看板上线</div>
+            <p>搭建 ECharts 交互式看板 + Flask 回测 API，部署至 Render 云平台，支持实时自定义回测。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-header" style="margin-top: 2rem;">
+      <h2>技能栈</h2>
+    </div>
+    <div class="card">
+      <div class="skills-group">
+        <div class="skills-category">
+          <h3>编程语言</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">Python</span>
+            <span class="skill-tag">SQL</span>
+            <span class="skill-tag">HTML/CSS/JS</span>
+          </div>
+        </div>
+        <div class="skills-category">
+          <h3>数据科学</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">Pandas</span>
+            <span class="skill-tag">NumPy</span>
+            <span class="skill-tag">Matplotlib</span>
+            <span class="skill-tag">Scikit-learn</span>
+          </div>
+        </div>
+        <div class="skills-category">
+          <h3>量化交易</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">Tushare Pro</span>
+            <span class="skill-tag">策略回测</span>
+            <span class="skill-tag">技术分析</span>
+            <span class="skill-tag">风险管理</span>
+            <span class="skill-tag">参数寻优</span>
+            <span class="skill-tag">VaR/CVaR</span>
+          </div>
+        </div>
+        <div class="skills-category">
+          <h3>Web 开发</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">Flask</span>
+            <span class="skill-tag">ECharts</span>
+            <span class="skill-tag">Render</span>
+            <span class="skill-tag">GitHub</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <p>夏阳 - 量化策略课程作品集 - 2025~2026</p>
+      <p style="margin-top: 4px;">
+        <a href="https://github.com/XY-YD/quant-strategy-portfolio" target="_blank">GitHub</a> |
+        <a href="mailto:3902323152@qq.com">邮箱</a> |
+        <a href="index.html">返回首页</a>
+      </p>
+    </footer>
+  </div>
+</body>
+</html>
