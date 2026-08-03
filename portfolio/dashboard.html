@@ -42,6 +42,24 @@
     <div class="main-content">
 
       <div class="tab-content active" id="tab-dual-ma">
+        <details class="methodology">
+          <summary>📖 策略原理：双均线交叉</summary>
+          <div class="methodology-body">
+            <p>双均线策略是最经典的趋势跟踪策略之一。通过计算短期和长期移动平均线（MA），当短期均线上穿长期均线（"金叉"）时买入，下穿（"死叉"）时卖出。核心思想是捕捉趋势的起始和结束。</p>
+            <div class="pseudo-code">MA_short = mean(close, N_short)  # 如 MA5
+MA_long  = mean(close, N_long)   # 如 MA15
+
+if MA_short crosses above MA_long:
+    BUY   # 金叉信号
+elif MA_short crosses below MA_long:
+    SELL  # 死叉信号</div>
+            <div class="params">
+              <span class="param-tag">MA5/MA15 — 短周期</span>
+              <span class="param-tag">MA10/MA30 — 中周期</span>
+              <span class="param-tag">MA20/MA60 — 长周期</span>
+            </div>
+          </div>
+        </details>
         <div class="risk-warning">
           <div class="icon">!</div>
           <div>均线参数容易过拟合，需要比较不同股票和周期。夏普比率仅供参考，不代表未来收益。</div>
@@ -72,6 +90,25 @@
       </div>
 
       <div class="tab-content" id="tab-turtle">
+        <details class="methodology">
+          <summary>📖 策略原理：海龟交易策略</summary>
+          <div class="methodology-body">
+            <p>海龟策略是 1980 年代理查德·丹尼斯创立的经典趋势突破系统。核心是在价格突破 N 日最高点时买入（唐奇安通道突破），使用 ATR（真实波幅）动态计算止损位和仓位大小，实现"截断亏损，让利润奔跑"。</p>
+            <div class="pseudo-code">upper = max(high, N_days)    # 唐奇安通道上轨
+lower = min(low, N_days)     # 唐奇安通道下轨
+ATR  = avg(TrueRange, M_days)  # 平均真实波幅
+
+if close > upper:
+    BUY  # 突破入场
+    stop_loss = entry_price - 2 * ATR  # 2倍ATR止损
+    position_size = risk_capital / ATR  # ATR定仓</div>
+            <div class="params">
+              <span class="param-tag">N=20 — 通道周期</span>
+              <span class="param-tag">ATR×2 — 止损倍数</span>
+              <span class="param-tag">1% — 单笔风险</span>
+            </div>
+          </div>
+        </details>
         <div class="risk-warning">
           <div class="icon">!</div>
           <div>趋势突破策略在震荡市场中可能频繁失效，需要结合止损纪律。ATR="市场的恐慌指数"，止损="保险绳"。</div>
@@ -98,6 +135,29 @@
       </div>
 
       <div class="tab-content" id="tab-turtle-adv">
+        <details class="methodology">
+          <summary>📖 策略原理：双系统海龟进阶</summary>
+          <div class="methodology-body">
+            <p>双系统海龟在经典海龟基础上引入两个独立突破系统：S1（短周期 20/10 日）捕捉中短期趋势，S2（长周期 55/20 日）捕捉大级别行情。两个系统独立产生信号，可以同时持仓并金字塔加仓，实现趋势的分层捕捉。</p>
+            <div class="pseudo-code"># 系统1: 短周期 (20日突破入场, 10日突破离场)
+S1_buy  = close > max(high, 20)
+S1_sell = close < min(low, 10)
+
+# 系统2: 长周期 (55日突破入场, 20日突破离场)
+S2_buy  = close > max(high, 55)
+S2_sell = close < min(low, 20)
+
+# 金字塔加仓: 每上涨 0.5*ATR 加仓 1 单位
+if profit_per_unit >= 0.5 * ATR:
+    add_position()  # 最多加仓 4 次</div>
+            <div class="params">
+              <span class="param-tag">S1: 20/10 日</span>
+              <span class="param-tag">S2: 55/20 日</span>
+              <span class="param-tag">加仓: 0.5×ATR</span>
+              <span class="param-tag">最大加仓: 4 次</span>
+            </div>
+          </div>
+        </details>
         <div class="risk-warning">
           <div class="icon">!</div>
           <div>双系统海龟(S1=20/10短线 + S2=55/20长线)含金字塔加仓和做空，风险敞口更大。经典海龟用2倍ATR止损控制每笔风险。</div>
@@ -124,6 +184,28 @@
       </div>
 
       <div class="tab-content" id="tab-ml-selection">
+        <details class="methodology">
+          <summary>📖 策略原理：ML 选股策略</summary>
+          <div class="methodology-body">
+            <p>使用梯度提升树（Gradient Boosting）模型，基于多因子特征预测股票下一季度是否上涨。每个季度截面提取技术指标、估值因子、动量因子等特征，训练模型后对未来涨跌做二分类预测，选 Top 预测得分的股票构建多头组合。</p>
+            <div class="pseudo-code"># 季度截面选股
+features = [RSI, MACD, MA_ratio, momentum, volatility, ...]
+labels  = (next_quarter_return > 0)  # 二分类标签
+
+model = GradientBoostingClassifier()
+model.fit(X_train, y_train)
+
+# 每季度预测 + 选股
+scores = model.predict_proba(X_test)
+portfolio = top_n_stocks(scores, n=10)  # 选预测涨幅最大的10只</div>
+            <div class="params">
+              <span class="param-tag">17 个特征</span>
+              <span class="param-tag">梯度提升树</span>
+              <span class="param-tag">季度截面</span>
+              <span class="param-tag">Top-10 选股</span>
+            </div>
+          </div>
+        </details>
         <div class="risk-warning">
           <div class="icon">!</div>
           <div>模型指标高不代表可交易性强，应关注样本外表现。预测模型转交易策略时，要额外考虑调仓频率和交易成本。</div>
@@ -146,6 +228,28 @@
       </div>
 
       <div class="tab-content" id="tab-optimization">
+        <details class="methodology">
+          <summary>📖 策略原理：参数寻优与样本外检验</summary>
+          <div class="methodology-body">
+            <p>对双均线策略进行 1296 组参数的网格搜索，在样本内（2019-2023）寻找最优参数组合，然后在样本外（2024-2026）做前向测试，检验策略是否过拟合。同时计算 VaR/CVaR 风险指标和不同交易成本下的收益敏感性。</p>
+            <div class="pseudo-code"># 网格搜索
+for short_ma in range(2, 20):
+    for long_ma in range(short_ma+1, 60):
+        result = backtest(data_in_sample, short_ma, long_ma)
+        record(result.sharpe, result.return)
+
+# 样本外验证
+best_params = select_top(params, by='sharpe')
+oos_result = backtest(data_out_sample, *best_params)
+# 比较样本内外表现差异，检查过拟合</div>
+            <div class="params">
+              <span class="param-tag">1296 组参数</span>
+              <span class="param-tag">样本内: 2019-2023</span>
+              <span class="param-tag">样本外: 2024-2026</span>
+              <span class="param-tag">VaR/CVaR</span>
+            </div>
+          </div>
+        </details>
         <div class="risk-warning">
           <div class="icon">!</div>
           <div>样本内最优参数不代表样本外最优。过度拟合历史数据可能导致未来实盘表现大幅下降。成本敏感性显示交易成本对收益的侵蚀。</div>
