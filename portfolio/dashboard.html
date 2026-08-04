@@ -3,10 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>交互式策略看板 - 量化策略课程</title>
+  <title>交互式策略看板 | 量化策略作品集 — 双均线·海龟·ML选股·自定义回测</title>
+  <meta name="description" content="量化策略交互式看板。支持双均线、海龟、双系统海龟、ML选股、参数寻优五大策略的ECharts可视化，含自定义回测工具，实时生成策略收益曲线与风险指标。">
+  <meta name="keywords" content="策略回测看板,交互式回测,自定义回测,ECharts量化,双均线回测,海龟回测,ML选股看板">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="交互式策略看板 | 量化策略作品集">
+  <meta property="og:description" content="双均线·海龟·ML选股·自定义回测 — 五大策略ECharts交互可视化，实时参数切换与收益曲线。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://quant-strategy-portfolio.vercel.app/dashboard.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="交互式策略看板 | 量化策略作品集">
+  <meta name="twitter:description" content="五大策略ECharts交互可视化，含自定义回测">
+  <link rel="canonical" href="https://quant-strategy-portfolio.vercel.app/dashboard.html">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
   <link rel="stylesheet" href="css/common.css">
   <link rel="stylesheet" href="css/dashboard.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js" defer></script>
 </head>
 <body>
   <nav class="top-nav">
@@ -14,6 +27,7 @@
     <div class="nav-links">
       <a href="index.html">首页</a>
       <a href="dashboard.html" class="active">看板</a>
+      <a href="blog.html">笔记</a>
       <a href="about.html">关于</a>
       <a href="https://github.com/XY-YD/quant-strategy-portfolio" target="_blank">GitHub</a>
     </div>
@@ -32,6 +46,9 @@
     <button class="tab-btn" data-tab="turtle-adv">双系统海龟</button>
     <button class="tab-btn" data-tab="ml-selection">ML选股</button>
     <button class="tab-btn" data-tab="optimization">策略寻优</button>
+    <button class="tab-btn" data-tab="bollinger">布林带策略</button>
+    <button class="tab-btn" data-tab="rsi">RSI策略</button>
+    <button class="tab-btn" data-tab="momentum">动量策略</button>
     <button class="tab-btn" data-tab="comparison">综合对比</button>
     <button class="tab-btn" data-tab="custom">⚡ 自定义回测</button>
   </div>
@@ -268,6 +285,126 @@ oos_result = backtest(data_out_sample, *best_params)
             <div class="chart-title">成本敏感性分析</div>
             <div class="chart-desc">不同滑点下年化收益/夏普/回撤变化</div>
             <div class="chart-body" id="chart-opt-sensitivity"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-bollinger">
+        <details class="methodology">
+          <summary>📖 策略原理：布林带策略</summary>
+          <div class="methodology-body">
+            <p>���林带（Bollinger Bands）由 John Bollinger 提出，由三条线组成：中轨为 N 日移动均线(MA)，上轨和下轨分别为中轨 ± k 倍标准差。当价格触及或突破下轨时视为超卖（买入信号），触及或突破上轨时视为超买（卖出信号）。适合震荡市，单边趋势中容易产生假信号。</p>
+            <div class="pseudo-code">MA      = mean(close, period)           # 中轨 (20日)
+STD     = std(close, period)            # 标准差
+Upper   = MA + STD_mult * STD          # 上轨 (2倍标准差)
+Lower   = MA - STD_mult * STD          # 下轨
+
+if close crosses below Lower:
+    BUY   # 超卖反弹信号
+elif close crosses above Upper:
+    SELL  # 超买回落信号</div>
+            <div class="params">
+              <span class="param-tag">period=20 — 均线周期</span>
+              <span class="param-tag">k=2.0 — 标准差倍数</span>
+            </div>
+          </div>
+        </details>
+        <div class="risk-warning">
+          <div class="icon">!</div>
+          <div>布林带在震荡市表现最佳，单边强趋势中会反复触发假突破信号。建议结合趋势过滤指标使用。</div>
+        </div>
+        <div class="chart-container">
+          <div class="chart-title">股价与布林带<span class="badge badge-accent" style="margin-left:8px;">BB(20,2)</span></div>
+          <div class="chart-desc">红色三角=买入(突破下轨)，绿色三角=卖出(突破上轨)</div>
+          <div class="chart-body tall" id="chart-bb-price"></div>
+        </div>
+        <div class="chart-grid cols-2">
+          <div class="chart-container">
+            <div class="chart-title">策略净值 vs 基准</div>
+            <div class="chart-body" id="chart-bb-nav"></div>
+          </div>
+          <div class="chart-container">
+            <div class="chart-title">回撤曲线</div>
+            <div class="chart-body" id="chart-bb-drawdown"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-rsi">
+        <details class="methodology">
+          <summary>📖 策略原理：RSI 策略</summary>
+          <div class="methodology-body">
+            <p>RSI（相对强弱指标）由 Welles Wilder 提出，通过比较一定周期内上涨和下跌的平均幅度来衡量价格动量。RSI 值在 0-100 之间：低于 30 为超卖区间（买入信号），高于 70 为超买区间（卖出信号）。在震荡市中，RSI 能有效捕捉均值回归机会。</p>
+            <div class="pseudo-code">RSI = 100 - 100 / (1 + RS)
+RS  = avg_gain / avg_loss    # 14日内
+avg_gain  = mean(max(Δclose, 0), 14)
+avg_loss  = mean(max(-Δclose, 0), 14)
+
+if RSI crosses above 30:
+    BUY   # 脱离超卖，反弹开始
+elif RSI crosses below 70:
+    SELL  # 脱离超买，回落开始</div>
+            <div class="params">
+              <span class="param-tag">period=14 — RSI 周期</span>
+              <span class="param-tag">oversold=30 — 超卖阈值</span>
+              <span class="param-tag">overbought=70 — 超买阈值</span>
+            </div>
+          </div>
+        </details>
+        <div class="risk-warning">
+          <div class="icon">!</div>
+          <div>RSI 策略基于均值回归假设。在强趋势市场中，RSI 可能长时间处于超买/超卖区域而无法回归，导致踏空或亏损。</div>
+        </div>
+        <div class="chart-container">
+          <div class="chart-title">RSI 指标与交易信号<span class="badge badge-accent" style="margin-left:8px;">RSI(14)</span></div>
+          <div class="chart-desc">红色虚线=超买线(70)，绿色虚线=超卖线(30)</div>
+          <div class="chart-body tall" id="chart-rsi-indicator"></div>
+        </div>
+        <div class="chart-grid cols-2">
+          <div class="chart-container">
+            <div class="chart-title">策略净值 vs 基准</div>
+            <div class="chart-body" id="chart-rsi-nav"></div>
+          </div>
+          <div class="chart-container">
+            <div class="chart-title">回撤曲线</div>
+            <div class="chart-body" id="chart-rsi-drawdown"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="tab-momentum">
+        <details class="methodology">
+          <summary>📖 策略原理：动量策略</summary>
+          <div class="methodology-body">
+            <p>动量策略（Momentum）基于"强者恒强"的市场惯性原理：计算 N 日价格变化率（ROC），当动量由负转正时买入（趋势确立），动量转负时卖出（趋势衰竭）。属于纯趋势跟踪策略，在单边市场中表现优异，但震荡市中容易反复止损。</p>
+            <div class="pseudo-code">Momentum = (close[t] / close[t-N] - 1) × 100%
+
+if Momentum crosses above 0:
+    BUY   # 动量转正，趋势确立
+elif Momentum crosses below 0:
+    SELL  # 动量转负，趋势结束</div>
+            <div class="params">
+              <span class="param-tag">lookback=20 — 动量计算周期</span>
+            </div>
+          </div>
+        </details>
+        <div class="risk-warning">
+          <div class="icon">!</div>
+          <div>动量策略在趋势市表现优异，但在横盘震荡市中会产生大量假信号导致频繁交易。建议配合波动率过滤使用。</div>
+        </div>
+        <div class="chart-container">
+          <div class="chart-title">股价与20日动量<span class="badge badge-accent" style="margin-left:8px;">MOM(20)</span></div>
+          <div class="chart-desc">红色三角=买入(动量转正)，绿色三角=卖出(动量转负)</div>
+          <div class="chart-body tall" id="chart-mom-price"></div>
+        </div>
+        <div class="chart-grid cols-2">
+          <div class="chart-container">
+            <div class="chart-title">策略净值 vs 基准</div>
+            <div class="chart-body" id="chart-mom-nav"></div>
+          </div>
+          <div class="chart-container">
+            <div class="chart-title">回撤曲线</div>
+            <div class="chart-body" id="chart-mom-drawdown"></div>
           </div>
         </div>
       </div>

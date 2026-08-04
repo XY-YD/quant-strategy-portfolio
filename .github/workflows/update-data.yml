@@ -1,0 +1,91 @@
+name: 每日数据更新
+
+on:
+  schedule:
+    # 北京时间每个交易日 18:00 (UTC 10:00)，周一至周五
+    - cron: '0 10 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      code:
+        description: '股票代码 (逗号分隔，默认更新宁德时代+沪深300)'
+        required: false
+        default: '300750'
+      force:
+        description: '强制更新 (即使无新数据也重建JSON)'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 设置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 安装依赖
+        run: |
+          pip install --upgrade pip
+          pip install tushare pandas numpy
+
+      - name: 创建 local_config.py
+        run: |
+          echo "TUSHARE_TOKEN = '${{ secrets.TUSHARE_TOKEN }}'" > local_config.py
+
+      - name: 更新股票数据
+        id: update
+        run: |
+          CODE="${{ github.event.inputs.code || '300750' }}"
+          echo "更新股票: $CODE"
+          python update_data.py --code "$CODE" --no-convert
+          echo "data_updated=true" >> $GITHUB_OUTPUT
+
+      - name: 重建 portfolio JSON
+        run: |
+          cd portfolio
+          python convert_data.py
+          echo "JSON 重建完成"
+
+      - name: 检测变更
+        id: diff
+        run: |
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "📭 无数据变更"
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "📬 检测到数据更新"
+          fi
+
+      - name: 提交并推送
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          TODAY=$(TZ='Asia/Shanghai' date +'%Y-%m-%d')
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "📊 数据自动更新 — $TODAY"
+          git push
+          echo "✅ 已提交并推送到 GitHub"
+
+      - name: 清理
+        if: always()
+        run: rm -f local_config.py
+
+      - name: 汇总
+        if: always()
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "  数据更新流水线执行完毕"
+          echo "  数据变更: ${{ steps.diff.outputs.changed || 'false' }}"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

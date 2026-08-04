@@ -412,4 +412,91 @@ const Charts = {
       ],
     });
   },
+
+  // --- 布林带策略 ---
+
+  renderBBPrice(data) {
+    const chart = this.init("chart-bb-price");
+    if (!chart) return;
+    const dLen = data.dates.length;
+    const buyIdx = [], sellIdx = [];
+    data.signals.forEach((s, i) => { if (s === 1) buyIdx.push(i); if (s === -1) sellIdx.push(i); });
+    chart.setOption({
+      tooltip: { trigger: "axis" },
+      legend: { data: ["收盘价", "中轨MA20", "上轨", "下轨"], top: 5 },
+      grid: { left: 70, right: 30, top: 40, bottom: 40 },
+      xAxis: { type: "category", data: data.dates, axisLabel: { rotate: 30, fontSize: 10 } },
+      yAxis: { type: "value", name: "价格(¥)" },
+      series: [
+        { name: "收盘价", type: "line", data: data.close, lineStyle: { width: 1.5, color: "#333" }, symbol: "none" },
+        { name: "上轨", type: "line", data: data.upper, lineStyle: { width: 1, color: CONFIG.colors.down, type: "dashed" }, symbol: "none" },
+        { name: "中轨MA20", type: "line", data: data.ma, lineStyle: { width: 1, color: CONFIG.colors.info }, symbol: "none" },
+        { name: "下轨", type: "line", data: data.lower, lineStyle: { width: 1, color: CONFIG.colors.down, type: "dashed" }, symbol: "none" },
+        { name: "买入", type: "scatter", data: buyIdx.map(i => [data.dates[i], data.close[i]]), symbol: "triangle", symbolSize: 12, itemStyle: { color: CONFIG.colors.up } },
+        { name: "卖出", type: "scatter", data: sellIdx.map(i => [data.dates[i], data.close[i]]), symbol: "triangle", symbolRotate: 180, symbolSize: 12, itemStyle: { color: CONFIG.colors.down } },
+      ],
+    });
+  },
+
+  // --- RSI 策略 ---
+
+  renderRSIIndicator(data) {
+    const chart = this.init("chart-rsi-indicator");
+    if (!chart) return;
+    const dLen = data.dates.length;
+    const buyIdx = [], sellIdx = [];
+    data.signals.forEach((s, i) => { if (s === 1) buyIdx.push(i); if (s === -1) sellIdx.push(i); });
+    chart.setOption({
+      tooltip: { trigger: "axis" },
+      legend: { data: ["收盘价", "RSI(14)"], top: 5 },
+      grid: [{ left: 70, right: 30, top: 40, height: "50%" }, { left: 70, right: 30, top: "65%", height: "25%" }],
+      xAxis: [
+        { type: "category", data: data.dates, gridIndex: 0, axisLabel: { show: false } },
+        { type: "category", data: data.dates, gridIndex: 1, axisLabel: { rotate: 30, fontSize: 10 } },
+      ],
+      yAxis: [
+        { type: "value", name: "价格(¥)", gridIndex: 0 },
+        { type: "value", name: "RSI", gridIndex: 1, min: 0, max: 100 },
+      ],
+      series: [
+        { name: "收盘价", type: "line", xAxisIndex: 0, yAxisIndex: 0, data: data.close, lineStyle: { width: 1.5, color: "#333" }, symbol: "none" },
+        { name: "RSI(14)", type: "line", xAxisIndex: 1, yAxisIndex: 1, data: data.rsi, lineStyle: { width: 1.5, color: CONFIG.colors.accent }, symbol: "none" },
+        { type: "line", xAxisIndex: 1, yAxisIndex: 1, data: Array(dLen).fill(70), lineStyle: { width: 1, color: CONFIG.colors.down, type: "dashed" }, symbol: "none", silent: true },
+        { type: "line", xAxisIndex: 1, yAxisIndex: 1, data: Array(dLen).fill(30), lineStyle: { width: 1, color: CONFIG.colors.up, type: "dashed" }, symbol: "none", silent: true },
+        { name: "买入", type: "scatter", xAxisIndex: 1, yAxisIndex: 1, data: buyIdx.map(i => [data.dates[i], data.rsi[i]]), symbol: "triangle", symbolSize: 12, itemStyle: { color: CONFIG.colors.up } },
+        { name: "卖出", type: "scatter", xAxisIndex: 1, yAxisIndex: 1, data: sellIdx.map(i => [data.dates[i], data.rsi[i]]), symbol: "triangle", symbolRotate: 180, symbolSize: 12, itemStyle: { color: CONFIG.colors.down } },
+      ],
+    });
+  },
+
+  // --- 动量策略 ---
+
+  renderMomPrice(data) {
+    const chart = this.init("chart-mom-price");
+    if (!chart) return;
+    const dLen = data.dates.length;
+    const buyIdx = [], sellIdx = [];
+    data.signals.forEach((s, i) => { if (s === 1) buyIdx.push(i); if (s === -1) sellIdx.push(i); });
+    chart.setOption({
+      tooltip: { trigger: "axis" },
+      legend: { data: ["收盘价", "动量(%)", "零线"], top: 5 },
+      grid: [{ left: 70, right: 30, top: 40, height: "50%" }, { left: 70, right: 30, top: "65%", height: "25%" }],
+      xAxis: [
+        { type: "category", data: data.dates, gridIndex: 0, axisLabel: { show: false } },
+        { type: "category", data: data.dates, gridIndex: 1, axisLabel: { rotate: 30, fontSize: 10 } },
+      ],
+      yAxis: [
+        { type: "value", name: "价格(¥)", gridIndex: 0 },
+        { type: "value", name: "动量(%)", gridIndex: 1 },
+      ],
+      series: [
+        { name: "收盘价", type: "line", xAxisIndex: 0, yAxisIndex: 0, data: data.close, lineStyle: { width: 1.5, color: "#333" }, symbol: "none" },
+        { name: "动量(%)", type: "bar", xAxisIndex: 1, yAxisIndex: 1, data: data.momentum.map(v => v || 0), itemStyle: { color: function(p) { return p.value >= 0 ? CONFIG.colors.up : CONFIG.colors.down; } } },
+        { type: "line", xAxisIndex: 1, yAxisIndex: 1, data: Array(dLen).fill(0), lineStyle: { width: 1, color: "#666", type: "dashed" }, symbol: "none", silent: true },
+        { name: "买入", type: "scatter", xAxisIndex: 0, yAxisIndex: 0, data: buyIdx.map(i => [data.dates[i], data.close[i]]), symbol: "triangle", symbolSize: 12, itemStyle: { color: CONFIG.colors.up } },
+        { name: "卖出", type: "scatter", xAxisIndex: 0, yAxisIndex: 0, data: sellIdx.map(i => [data.dates[i], data.close[i]]), symbol: "triangle", symbolRotate: 180, symbolSize: 12, itemStyle: { color: CONFIG.colors.down } },
+      ],
+    });
+  },
+
 };

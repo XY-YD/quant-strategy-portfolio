@@ -33,6 +33,10 @@ const DataLoader = {
       "task7_optimization.json", "task7_comparison.json", "task7_sensitivity.json",
       // TASK8
       "task8_summary.json",
+      // New strategies (P2)
+      "new_bollinger_index.json", "new_bollinger_BB_20_2.json",
+      "new_rsi_index.json", "new_rsi_RSI_14_30_70.json",
+      "new_momentum_index.json", "new_momentum_MOM_20.json",
     ];
     const results = await Promise.all(files.map((f) => this.load(f)));
     const data = {};
@@ -51,6 +55,9 @@ const Dashboard = {
     "turtle-adv": 0,
     "ml-selection": "全部",
     "optimization": "sharpe",
+    "bollinger": 0,
+    "rsi": 0,
+    "momentum": 0,
   },
 
   // Map param index to backtest JSON key for each tab
@@ -112,6 +119,12 @@ const Dashboard = {
       this.renderOptSidebar(sidebar, d);
     } else if (tabName === "comparison") {
       this.renderCmpSidebar(sidebar, d);
+    } else if (tabName === "bollinger") {
+      this.renderBBSidebar(sidebar, d);
+    } else if (tabName === "rsi") {
+      this.renderRSISidebar(sidebar, d);
+    } else if (tabName === "momentum") {
+      this.renderMomSidebar(sidebar, d);
     } else if (tabName === "custom") {
       this.renderCustomSidebar(sidebar);
     }
@@ -305,10 +318,16 @@ const Dashboard = {
     const turtleParams = d.task4_params || [];
     const advParams = d.task4_advanced_params || [];
     const models = d.task6_models || [];
+    const bbData = d.new_bollinger_BB_20_2;
+    const rsiData = d.new_rsi_RSI_14_30_70;
+    const momData = d.new_momentum_MOM_20;
     const maBest = maParams.reduce((a, b) => (a.sharpe > b.sharpe ? a : b), maParams[0] || {});
     const turtleBest = turtleParams.reduce((a, b) => (a.sharpe > b.sharpe ? a : b), turtleParams[0] || {});
     const advBest = advParams.reduce((a, b) => (a.sharpe > b.sharpe ? a : b), advParams[0] || {});
     const mlBest = models.reduce((a, b) => (a.sharpe > b.sharpe ? a : b), models[0] || {});
+    const bbM = bbData?.metrics || {};
+    const rsiM = rsiData?.metrics || {};
+    const momM = momData?.metrics || {};
 
     sidebar.innerHTML = `
       <h3>策略对比总览</h3>
@@ -324,20 +343,116 @@ const Dashboard = {
         夏普: ${(advBest.sharpe || 0).toFixed(2)} | 回撤: ${(advBest.mdd || 0).toFixed(1)}%<br><br>
         <strong>ML选股(${mlBest.name || '梯度提升'})</strong><br>
         回报: <span class="${(mlBest.cum_return || 0) >= 0 ? 'text-up' : 'text-down'}">${((mlBest.cum_return || 0) * 100).toFixed(1)}%</span><br>
-        夏普: ${(mlBest.sharpe || 0).toFixed(2)} | 回撤: ${((mlBest.mdd || 0) * 100).toFixed(1)}%
+        夏普: ${(mlBest.sharpe || 0).toFixed(2)} | 回撤: ${((mlBest.mdd || 0) * 100).toFixed(1)}%<br><br>
+        <strong>布林带</strong><br>
+        回报: <span class="${(bbM.total_return_pct || 0) >= 0 ? 'text-up' : 'text-down'}">${(bbM.total_return_pct || 0).toFixed(1)}%</span><br>
+        夏普: ${(bbM.sharpe || 0).toFixed(2)} | 回撤: ${(bbM.max_dd || 0).toFixed(1)}%<br><br>
+        <strong>RSI</strong><br>
+        回报: <span class="${(rsiM.total_return_pct || 0) >= 0 ? 'text-up' : 'text-down'}">${(rsiM.total_return_pct || 0).toFixed(1)}%</span><br>
+        夏普: ${(rsiM.sharpe || 0).toFixed(2)} | 回撤: ${(rsiM.max_dd || 0).toFixed(1)}%<br><br>
+        <strong>动量</strong><br>
+        回报: <span class="${(momM.total_return_pct || 0) >= 0 ? 'text-up' : 'text-down'}">${(momM.total_return_pct || 0).toFixed(1)}%</span><br>
+        夏普: ${(momM.sharpe || 0).toFixed(2)} | 回撤: ${(momM.max_dd || 0).toFixed(1)}%
       </div>
       <h3>结论</h3>
       <div style="font-size:11px;color:var(--color-text-secondary);line-height:1.6;">
-        各策略在不同市场环境下表现各异。趋势市中双均线和海龟占优，震荡市中ML选股和风控增强策略更具优势。
+        7种策略覆盖趋势跟踪、均值回归、机器学习三类方法。各策略在不同市场环境下表现各异。
       </div>
       <h3>对比维度</h3>
       <div class="param-group">
         <label>雷达图维度</label>
         <select id="param-cmp-sort" onchange="Dashboard.refreshComparison()">
-          <option value="all">综合对比(全部)</option>
+          <option value="all">综合对比(7策略)</option>
           <option value="return">回报导向</option>
           <option value="risk">风险导向</option>
         </select>
+      </div>
+    `;
+  },
+
+  renderBBSidebar(sidebar, d) {
+    const bt = d.new_bollinger_BB_20_2;
+    const m = bt?.metrics || {};
+    sidebar.innerHTML = `
+      <h3>布林带策略</h3>
+      <div class="sidebar-metrics">
+        <div class="sidebar-metric"><div class="lbl">参数</div><div class="val">BB(20,2)</div></div>
+        <div class="sidebar-metric"><div class="lbl">累计收益</div><div class="val ${(m.total_return_pct || 0) >= 0 ? 'text-up' : 'text-down'}">${(m.total_return_pct || 0).toFixed(1)}%</div></div>
+        <div class="sidebar-metric"><div class="lbl">夏普比率</div><div class="val ${(m.sharpe || 0) >= 0 ? 'text-up' : 'text-down'}">${(m.sharpe || 0).toFixed(2)}</div></div>
+        <div class="sidebar-metric"><div class="lbl">最大回撤</div><div class="val text-down">${(m.max_dd || 0).toFixed(1)}%</div></div>
+      </div>
+      <h3>交易统计</h3>
+      <div style="font-size:11px;color:var(--color-text-secondary);line-height:1.8;">
+        总交易: ${m.total_trades || 0}次<br>
+        胜率: ${(m.win_rate || 0).toFixed(0)}%<br>
+        均笔收益: ${(m.avg_trade_return || 0).toFixed(2)}%
+      </div>
+      <h3>基准对比</h3>
+      <div style="font-size:11px;color:var(--color-text-secondary);line-height:1.8;">
+        买入持有: <span class="${(m.benchmark_return || 0) >= 0 ? 'text-up' : 'text-down'}">${(m.benchmark_return || 0).toFixed(1)}%</span><br>
+        基准回撤: <span class="text-down">${(m.benchmark_mdd || 0).toFixed(1)}%</span>
+      </div>
+      <h3>策略特征</h3>
+      <div style="font-size:11px;color:var(--color-text-secondary);line-height:1.6;">
+        均值回归型。震荡市最佳，单边趋势中可能反复错失机会。
+      </div>
+    `;
+  },
+
+  renderRSISidebar(sidebar, d) {
+    const bt = d.new_rsi_RSI_14_30_70;
+    const m = bt?.metrics || {};
+    sidebar.innerHTML = `
+      <h3>RSI 策略</h3>
+      <div class="sidebar-metrics">
+        <div class="sidebar-metric"><div class="lbl">参数</div><div class="val">RSI(14)</div></div>
+        <div class="sidebar-metric"><div class="lbl">累计收益</div><div class="val ${(m.total_return_pct || 0) >= 0 ? 'text-up' : 'text-down'}">${(m.total_return_pct || 0).toFixed(1)}%</div></div>
+        <div class="sidebar-metric"><div class="lbl">夏普比率</div><div class="val ${(m.sharpe || 0) >= 0 ? 'text-up' : 'text-down'}">${(m.sharpe || 0).toFixed(2)}</div></div>
+        <div class="sidebar-metric"><div class="lbl">最大回撤</div><div class="val text-down">${(m.max_dd || 0).toFixed(1)}%</div></div>
+      </div>
+      <h3>交易统计</h3>
+      <div style="font-size:11px;color:var(--color-text-secondary);line-height:1.8;">
+        总交易: ${m.total_trades || 0}次<br>
+        胜率: ${(m.win_rate || 0).toFixed(0)}%<br>
+        均笔收益: ${(m.avg_trade_return || 0).toFixed(2)}%
+      </div>
+      <h3>基准对比</h3>
+      <div style="font-size:11px;color:var(--color-text-secondary);line-height:1.8;">
+        买入持有: <span class="${(m.benchmark_return || 0) >= 0 ? 'text-up' : 'text-down'}">${(m.benchmark_return || 0).toFixed(1)}%</span><br>
+        基准回撤: <span class="text-down">${(m.benchmark_mdd || 0).toFixed(1)}%</span>
+      </div>
+      <h3>策略特征</h3>
+      <div style="font-size:11px;color:var(--color-text-secondary);line-height:1.6;">
+        均值回归型。交易频率低，信号质量高，适合耐心资金。
+      </div>
+    `;
+  },
+
+  renderMomSidebar(sidebar, d) {
+    const bt = d.new_momentum_MOM_20;
+    const m = bt?.metrics || {};
+    sidebar.innerHTML = `
+      <h3>动量策略</h3>
+      <div class="sidebar-metrics">
+        <div class="sidebar-metric"><div class="lbl">参数</div><div class="val">MOM(20)</div></div>
+        <div class="sidebar-metric"><div class="lbl">累计收益</div><div class="val ${(m.total_return_pct || 0) >= 0 ? 'text-up' : 'text-down'}">${(m.total_return_pct || 0).toFixed(1)}%</div></div>
+        <div class="sidebar-metric"><div class="lbl">夏普比率</div><div class="val ${(m.sharpe || 0) >= 0 ? 'text-up' : 'text-down'}">${(m.sharpe || 0).toFixed(2)}</div></div>
+        <div class="sidebar-metric"><div class="lbl">最大回撤</div><div class="val text-down">${(m.max_dd || 0).toFixed(1)}%</div></div>
+      </div>
+      <h3>交易统计</h3>
+      <div style="font-size:11px;color:var(--color-text-secondary);line-height:1.8;">
+        总交易: ${m.total_trades || 0}次<br>
+        胜率: ${(m.win_rate || 0).toFixed(0)}%<br>
+        均笔收益: ${(m.avg_trade_return || 0).toFixed(2)}%
+      </div>
+      <h3>基准对比</h3>
+      <div style="font-size:11px;color:var(--color-text-secondary);line-height:1.8;">
+        买入持有: <span class="${(m.benchmark_return || 0) >= 0 ? 'text-up' : 'text-down'}">${(m.benchmark_return || 0).toFixed(1)}%</span><br>
+        基准回撤: <span class="text-down">${(m.benchmark_mdd || 0).toFixed(1)}%</span>
+      </div>
+      <h3>策略特征</h3>
+      <div style="font-size:11px;color:var(--color-text-secondary);line-height:1.6;">
+        趋势跟踪型。交易频繁，牛市表现优异，震荡市回撤较大。
       </div>
     `;
   },
@@ -417,6 +532,21 @@ const Dashboard = {
 
     } else if (tabName === "comparison") {
       this.renderComparisonCharts(d);
+    } else if (tabName === "bollinger") {
+      const bt = d.new_bollinger_BB_20_2;
+      if (bt) Charts.renderBBPrice(bt);
+      if (bt) Charts.renderNav(bt, "chart-bb-nav", "买入持有");
+      if (bt) Charts.renderDrawdown(bt, "chart-bb-drawdown");
+    } else if (tabName === "rsi") {
+      const bt = d.new_rsi_RSI_14_30_70;
+      if (bt) Charts.renderRSIIndicator(bt);
+      if (bt) Charts.renderNav(bt, "chart-rsi-nav", "���入持有");
+      if (bt) Charts.renderDrawdown(bt, "chart-rsi-drawdown");
+    } else if (tabName === "momentum") {
+      const bt = d.new_momentum_MOM_20;
+      if (bt) Charts.renderMomPrice(bt);
+      if (bt) Charts.renderNav(bt, "chart-mom-nav", "买入持有");
+      if (bt) Charts.renderDrawdown(bt, "chart-mom-drawdown");
     } else if (tabName === "custom") {
       // Custom backtest tab — handled by CustomBacktest module
       // Re-check server connection when switching to this tab
@@ -431,22 +561,52 @@ const Dashboard = {
     const adv = d.task4_advanced_backtest;
     if (ma && turtle && adv) Charts.renderCmpNav(ma, turtle, adv);
 
-    // Dynamic comparison data from params
+    // Dynamic comparison data from params (include new strategies)
     const maParams = d.task3_params || [];
     const turtleParams = d.task4_params || [];
     const advParams = d.task4_advanced_params || [];
     const models = d.task6_models || [];
+    const bbData = d.new_bollinger_BB_20_2;
+    const rsiData = d.new_rsi_RSI_14_30_70;
+    const momData = d.new_momentum_MOM_20;
 
     const maBest = maParams.reduce((a, b) => (a.sharpe > b.sharpe ? a : b), maParams[0] || {});
     const turtleBest = turtleParams.reduce((a, b) => (a.sharpe > b.sharpe ? a : b), turtleParams[0] || {});
     const advBest = advParams.reduce((a, b) => (a.sharpe > b.sharpe ? a : b), advParams[0] || {});
     const mlBest = models.reduce((a, b) => (a.sharpe > b.sharpe ? a : b), models[0] || {});
+    const bbMetrics = bbData?.metrics || {};
+    const rsiMetrics = rsiData?.metrics || {};
+    const momMetrics = momData?.metrics || {};
 
     const cmp = {
-      labels: ["双均线", "海龟", "双系统海龟", "ML选股"],
-      returns: [maBest.return_pct || 0, turtleBest.return_pct || 0, advBest.return_pct || 0, (mlBest.cum_return || 0) * 100],
-      sharpes: [maBest.sharpe || 0, turtleBest.sharpe || 0, advBest.sharpe || 0, mlBest.sharpe || 0],
-      mdds: [maBest.mdd || 0, turtleBest.mdd || 0, advBest.mdd || 0, (mlBest.mdd || 0) * 100],
+      labels: ["双均线", "海龟", "双系统海龟", "ML选股", "布林带", "RSI", "动量"],
+      returns: [
+        maBest.return_pct || 0,
+        turtleBest.return_pct || 0,
+        advBest.return_pct || 0,
+        (mlBest.cum_return || 0) * 100,
+        bbMetrics.total_return_pct || 0,
+        rsiMetrics.total_return_pct || 0,
+        momMetrics.total_return_pct || 0,
+      ],
+      sharpes: [
+        maBest.sharpe || 0,
+        turtleBest.sharpe || 0,
+        advBest.sharpe || 0,
+        mlBest.sharpe || 0,
+        bbMetrics.sharpe || 0,
+        rsiMetrics.sharpe || 0,
+        momMetrics.sharpe || 0,
+      ],
+      mdds: [
+        maBest.mdd || 0,
+        turtleBest.mdd || 0,
+        advBest.mdd || 0,
+        (mlBest.mdd || 0) * 100,
+        bbMetrics.max_dd || 0,
+        rsiMetrics.max_dd || 0,
+        momMetrics.max_dd || 0,
+      ],
     };
 
     Charts.renderCmpRadar(cmp);
