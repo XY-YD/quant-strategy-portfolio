@@ -4,8 +4,9 @@
 
 ## 在线访问
 
-- **在线访问**: https://quant-strategy-portfolio.onrender.com
-- **交互看板**: 点击主页右上角"交互看板"进入，支持实时自定义回测
+- **Vercel（推荐）**: https://quant-strategy-portfolio.vercel.app — CDN 加速，零冷启动
+- **Render（全栈）**: https://quant-strategy-portfolio.onrender.com — 含自定义回测 API
+- **CloudStudio（备份）**: https://03cd4b9750134b478a48257b546867ac.gz1.agentos-app.net
 - **代码仓库**: https://github.com/XY-YD/quant-strategy-portfolio
 
 ## 项目结构
