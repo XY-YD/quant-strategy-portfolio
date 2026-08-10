@@ -35,9 +35,14 @@ jobs:
           cache: 'pip'
 
       - name: 安装依赖
+        continue-on-error: true
         run: |
           pip install --upgrade pip
-          pip install tushare pandas numpy
+          for i in 1 2 3; do
+            pip install tushare pandas numpy && break
+            echo "⚠️ pip install 失败，重试 ($i/3)..."
+            sleep 5
+          done
 
       - name: 检查 TUSHARE_TOKEN
         id: check_token
