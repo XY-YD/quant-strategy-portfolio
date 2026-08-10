@@ -23,7 +23,7 @@ from datetime import datetime, timedelta
 
 try:
     from local_config import TUSHARE_TOKEN
-except ImportError:
+except (ImportError, SyntaxError):
     TUSHARE_TOKEN = os.environ.get("TUSHARE_TOKEN", "")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 

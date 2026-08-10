@@ -56,7 +56,7 @@ jobs:
           else
             echo "✅ TUSHARE_TOKEN 已配置"
             echo "has_token=true" >> $GITHUB_OUTPUT
-            echo "TUSHARE_TOKEN = '${TUSHARE_TOKEN}'" > local_config.py
+            python3 -c "import os; open('local_config.py','w').write('TUSHARE_TOKEN = ' + repr(os.environ['TUSHARE_TOKEN']) + '\n')"
           fi
 
       - name: 更新股票数据
