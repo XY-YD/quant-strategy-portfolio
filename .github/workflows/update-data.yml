@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       code:
-        description: '股票代码 (逗号分隔，默认更新宁德时代+沪深300)'
+        description: '股票代码 (逗号分隔，默认更新宁德时代)'
         required: false
         default: '300750'
       force:
@@ -15,6 +15,9 @@ on:
         required: false
         type: boolean
         default: false
+
+permissions:
+  contents: write
 
 jobs:
   update-data:
@@ -24,8 +27,6 @@ jobs:
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 设置 Python
         uses: actions/setup-python@v5
@@ -38,19 +39,38 @@ jobs:
           pip install --upgrade pip
           pip install tushare pandas numpy
 
-      - name: 创建 local_config.py
+      - name: 检查 TUSHARE_TOKEN
+        id: check_token
+        env:
+          TUSHARE_TOKEN: ${{ secrets.TUSHARE_TOKEN }}
         run: |
-          echo "TUSHARE_TOKEN = '${{ secrets.TUSHARE_TOKEN }}'" > local_config.py
+          if [ -z "$TUSHARE_TOKEN" ]; then
+            echo "⚠️ TUSHARE_TOKEN 未配置，跳过数据拉取"
+            echo "has_token=false" >> $GITHUB_OUTPUT
+            echo "请在 GitHub Settings → Secrets → Actions → Repository secrets 中添加 TUSHARE_TOKEN"
+          else
+            echo "✅ TUSHARE_TOKEN 已配置"
+            echo "has_token=true" >> $GITHUB_OUTPUT
+            echo "TUSHARE_TOKEN = '${TUSHARE_TOKEN}'" > local_config.py
+          fi
 
       - name: 更新股票数据
         id: update
+        if: steps.check_token.outputs.has_token == 'true'
+        continue-on-error: true
         run: |
           CODE="${{ github.event.inputs.code || '300750' }}"
-          echo "更新股票: $CODE"
-          python update_data.py --code "$CODE" --no-convert
+          FORCE="${{ github.event.inputs.force || 'false' }}"
+          echo "更新股票: $CODE (force=$FORCE)"
+          if [ "$FORCE" = "true" ]; then
+            python update_data.py --code "$CODE" --no-convert --start 2019-01-01
+          else
+            python update_data.py --code "$CODE" --no-convert
+          fi
           echo "data_updated=true" >> $GITHUB_OUTPUT
 
       - name: 重建 portfolio JSON
+        continue-on-error: true
         run: |
           cd portfolio
           python convert_data.py
@@ -87,5 +107,7 @@ jobs:
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "  数据更新流水线执行完毕"
+          echo "  Token配置: ${{ steps.check_token.outputs.has_token || 'false' }}"
+          echo "  数据更新: ${{ steps.update.outputs.data_updated || 'skipped' }}"
           echo "  数据变更: ${{ steps.diff.outputs.changed || 'false' }}"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
